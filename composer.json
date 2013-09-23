@@ -1,31 +1,13 @@
 {
     "name": "n-educatio/testbundle",
-    "description": "Fixtures and Personas",
-    "keywords": ["BDD", "Fixtures", "Tests"],
-    "homepage": "http://n-educatio.pl/",
-    "version": "1.0.0",
-    "type": "package",
-    "authors": [
-        {
-            "name": "n-educatio",
-            "email": "biuro@n-educatio.pl",
-            "homepage": "http://n-educatio.pl"
+    "autoload": {
+        "psr-0" : {
+            "Neducatio" : "src"
         }
-    ],
-
+    },
     "require": {
         "php": ">=5.3.3",
 	"behat/behat": ">=2.4.0",
 	"behat/mink": ">=1.5",
-    },
-
-    "require-dev": {
-        "phpunit/phpunit": "~3.7.22"
-    },
-
-    "autoload": {
-        "psr-0": {
-            "Neducatio": "src/"
-        }
     }
 }
