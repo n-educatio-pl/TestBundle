@@ -3,6 +3,7 @@
     "description": "Fixtures and Personas",
     "keywords": ["BDD", "Fixtures", "Tests"],
     "homepage": "http://n-educatio.pl/",
+    "version": "1.0.0",
     "type": "package",
     "authors": [
         {
