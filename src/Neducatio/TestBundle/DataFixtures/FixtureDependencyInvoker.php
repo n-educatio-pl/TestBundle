@@ -7,10 +7,6 @@ use Neducatio\TestBundle\DataFixtures\FixtureExecutor;
 use Neducatio\TestBundle\DataFixtures\ComponentBuilder;
 use Neducatio\TestBundle\DataFixtures\UniqueDependencyResolver;
 
-// @codeCoverageIgnoreStart
-require_once __DIR__ . '/../../../../app/AppKernel.php';
-// @codeCoverageIgnoreEnd
-
 /**
  * Fixture Dependency Invoker
  */
@@ -94,6 +90,13 @@ class FixtureDependencyInvoker
 
   private function createKernel()
   {
+    $path = '/../../../../app/AppKernel.php';
+    $kernelPath = __DIR__ . (file_exists(__DIR__ . $path) ? $path : '/../../..' . $path);
+
+    // @codeCoverageIgnoreStart
+    require_once $kernelPath;
+    // @codeCoverageIgnoreEnd
+
     $kernel = new \AppKernel("test", true);
     $kernel->boot();
 
