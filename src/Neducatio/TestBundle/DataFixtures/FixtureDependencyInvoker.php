@@ -91,7 +91,7 @@ class FixtureDependencyInvoker
   private function createKernel()
   {
     $path = '/../../../../app/AppKernel.php';
-    $kernelPath = __DIR__ . (file_exists(__DIR__ . $path) ? $path : '/../../..' . $path);
+    $kernelPath = __DIR__ . (file_exists(__DIR__ . '/../../..' . $path) ? '/../../..' . $path : $path);
 
     // @codeCoverageIgnoreStart
     require_once $kernelPath;
