@@ -1,0 +1,24 @@
+framework:
+    secret: test_blah
+    router:
+        resource: "%kernel.root_dir%/config/routing.yml"
+        strict_requirements: "%kernel.debug%"
+    form: true
+    csrf_protection: true
+    validation: { enable_annotations: true }
+    default_locale: en
+    trusted_proxies: ~
+    session: ~
+    
+doctrine:
+    dbal:
+        driver: pdo_pgsql
+        host: localhost
+        port: 5432
+        dbname: neducatio_testbundle
+        user: postgres
+        password: ~
+
+    orm:
+        auto_generate_proxy_classes: %kernel.debug%
+        auto_mapping: true
