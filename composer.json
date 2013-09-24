@@ -1,5 +1,5 @@
 {
-    "name": "n-educatio/test-bundle",
+    "name": "n-educatio/testbundle",
     "authors": [
         {
             "name": "n-educatio",
@@ -19,7 +19,7 @@
     },
     "autoload": {
         "psr-0": {
-            "Neducatio": "src/"
+            "Neducatio\\TestBundle\\": "src/"
         }
     }
 }
