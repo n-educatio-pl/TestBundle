@@ -51,7 +51,8 @@ Kontekst
       }
     }
 
-W naszym przypadku PageObjectem może stać się każdy element na stronie, taki jak menu, panel językowy.
+W naszym przypadku PageObjectem może stać się każdy element na stronie, taki jak menu, panel językowy, itp. Na co
+należy zwrócić uwagę to pole $proofSelector, które informuje o zasięgu działania PageObjectu.
 
     use Neducatio\TestBundle\PageObject\BasePageObject;
     class LanguagePanel extends BasePageObject
