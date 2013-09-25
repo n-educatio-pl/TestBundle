@@ -120,54 +120,7 @@ Oraz Julia Lazy
       );
     }
 
-Obie persony muszą dziedziczyć po klasie LoadActorUserData, która wygląda dla użytkowników w następujący sposób
-
-    namespace Neducatio\UserBundle\DataFixtures\ORM;
-    use Doctrine\Common\Persistence\ObjectManager;
-    use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
-    use Neducatio\TestBundle\DataFixtures\Fixture;
-    use Neducatio\UserBundle\Entity\User;
-    abstract class LoadActorUserData extends Fixture implements OrderedFixtureInterface
-    {
-      protected $prefix = 'user_';
-      protected $order;
-      protected $userData = array();
-      /**
-       * Zapisuje dane w bazie uzywajac $this->data. Load data fixtures with the passed EntityManager.
-       *
-       * @param Doctrine\Common\Persistence\ObjectManager $manager Manager
-       */
-      public function load(ObjectManager $manager)
-      {
-        foreach ($this->userData as $actor => $data) {
-          $user = new User();
-          $user->setUsername($data['username']);
-          $user->setEmail($data['username']);
-          $encoder = $this->container->get('security.encoder_factory')->getEncoder($user);
-          $user->setPassword($encoder->encodePassword('test', $user->getSalt()));
-          $user->setEnabled(true);
-          $user->setLocked(false);
-          $user->addRole($data['roles']);
-          $user->setFirstname($data['firstname']);
-          $user->setLastname($data['lastname']);
-          if ($data['registered']) {
-            $manager->persist($user);
-            $manager->flush();
-          }
-          $this->addReference($this->prefix . $actor, $user);
-        }
-      }
-      /**
-       * Definiuje jako ktory fixture ma się wykonac
-       *
-       * @return int
-       */
-      public function getOrder()
-      {
-        return $this->order;
-      }
-    }
-
+Obie persony w tym przypadku muszą dziedziczyć po klasie [LoadActorUserData](https://github.com/n-educatio/cb/blob/master/src/Neducatio/UserBundle/DataFixtures/ORM/LoadActorUserData.php).
 Oczywistym staje się fakt, że każdy rodzaj person będzie miał analogicznie budowaną klasę, po której dziedziczą persony
 tego samego rodzaju.
 
@@ -182,7 +135,7 @@ wpis:
           B::NAME,
       );
 
-Teraz za każdym razem, gdy będziemy próbowali wczytać Fixture A, nasz TestBundle doczyta nam zależy Fixture B.
+Teraz za każdym razem, gdy będziemy próbowali wczytać Fixture A, nasz TestBundle doczyta nam zależny Fixture B.
 
 Wczytywanie zależności
 ----------------------
