@@ -1,8 +1,8 @@
 TestBundle
 ==========
 
-Paczka usprawnia mechanizm Symfonowskiego ładowania fixture'sów. Paczka jest całkowicie autonomiczna
-i testowanie jej powinno być bezproblemowe. Co więcej TestBundle wprowadza nową zasadę odwoływania się
+Paczka usprawnia mechanizm Symfonowskiego ładowania fixturesów. Paczka jest całkowicie autonomiczna, oraz
+jest pokryta testami jednostkowymi w 100%. Co więcej, TestBundle wprowadza nową zasadę odwoływania się
 do konkretnych elementów na stronie za pomocą tak zwanych uchwytów.
 
 Instalacja
@@ -23,8 +23,8 @@ Następnie instalujemy brakujące vendorsy:
 
     php composer.phar install
     
-Przykłady użycia
-----------------
+Przykład użycia uchwytów
+------------------------
 **Przykład testu dla zmiany języka:**
 
 Kontekst
@@ -72,5 +72,128 @@ W naszym przypadku PageObjectem może stać się każdy element na stronie, taki
       }
     }
     
-Zauważ, że metoda get() pobiera teraz uchwyt id, który tym przypadku musi być zahardkodowany w htmlu
-jako t\_uchwyt.
+Zauważ, że metoda get() pobiera teraz uchwyt id, który musi być zahardkodowany w htmlu jako t\_uchwyt.
+
+Podział na Persony/itp
+----------------------
+
+Naszym celem jest wczytanie tylko konkrentych Fixturesów potrzebnych do odpalenia testów, stąd każdy
+Fixture deklarowany jest jako konkrenta Osoba/Kurs/Komentarz/itd, który posiada unikatowe właściwości i atrybuty.
+Powiedzmy, że w naszym systemie istnieje dwóch testowych użytkowników: Julia Lazy ( persona, która jest już
+zarejestrowana w serwisie ) oraz Amy Fresh ( persona nie powiązana jeszcze w żaden sposób z aplikacją, ale posiadająca
+swój własny adres email, nazwę itp. Tworzymy je w następujący sposób:
+Nasza Amy Fresh
+
+    namespace Neducatio\UserBundle\DataFixtures\ORM;
+    class LoadAmyFreshUserData extends LoadActorUserData
+    {
+      const NAME = __CLASS__;
+      protected $order = 100;
+      protected $userData = array(
+        'AmyFresh' => array(
+          "username" => "amy.fresh@example.com",
+          "description" => "Teacher that visits the app for the first time and wants to give it a try",
+          "roles" => "ROLE_USER",
+          "firstname" => "Amy",
+          "lastname" => "Fresh",
+          "registered" => false,
+        ),
+      );
+    }
+
+Oraz Julia Lazy
+
+    namespace Neducatio\UserBundle\DataFixtures\ORM;
+    class LoadJuliaLazyUserData extends LoadActorUserData
+    {
+      const NAME = __CLASS__;
+      protected $order = 101;
+      protected $userData = array(
+        'JuliaLazy' => array(
+          "username" => "julia.lazy@example.com",
+          "description" => "User that is only registered in the system",
+          "roles" => "ROLE_USER",
+          "firstname" => "Julia",
+          "lastname" => "Lazy",
+          "registered" => true,
+        ),
+      );
+    }
+
+Obie persony muszą dziedziczyć po klasie LoadActorUserData, która wygląda dla użytkowników w następujący sposób
+
+    namespace Neducatio\UserBundle\DataFixtures\ORM;
+    use Doctrine\Common\Persistence\ObjectManager;
+    use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
+    use Neducatio\TestBundle\DataFixtures\Fixture;
+    use Neducatio\UserBundle\Entity\User;
+    abstract class LoadActorUserData extends Fixture implements OrderedFixtureInterface
+    {
+      protected $prefix = 'user_';
+      protected $order;
+      protected $userData = array();
+      /**
+       * Zapisuje dane w bazie uzywajac $this->data. Load data fixtures with the passed EntityManager.
+       *
+       * @param Doctrine\Common\Persistence\ObjectManager $manager Manager
+       */
+      public function load(ObjectManager $manager)
+      {
+        foreach ($this->userData as $actor => $data) {
+          $user = new User();
+          $user->setUsername($data['username']);
+          $user->setEmail($data['username']);
+          $encoder = $this->container->get('security.encoder_factory')->getEncoder($user);
+          $user->setPassword($encoder->encodePassword('test', $user->getSalt()));
+          $user->setEnabled(true);
+          $user->setLocked(false);
+          $user->addRole($data['roles']);
+          $user->setFirstname($data['firstname']);
+          $user->setLastname($data['lastname']);
+          if ($data['registered']) {
+            $manager->persist($user);
+            $manager->flush();
+          }
+          $this->addReference($this->prefix . $actor, $user);
+        }
+      }
+      /**
+       * Definiuje jako ktory fixture ma się wykonac
+       *
+       * @return int
+       */
+      public function getOrder()
+      {
+        return $this->order;
+      }
+    }
+
+Oczywistym staje się fakt, że każdy rodzaj person będzie miał analogicznie budowaną klasę, po której dziedziczą persony
+tego samego rodzaju.
+
+Dodawanie zależności
+--------------------
+
+Przejdżmy teraz do sedna możliwości naszego TestBundle. Załóżmy, że chcemy dodać do naszych Fixturesów pewne zależności.
+Robimy to w bardzo prosty sposób. W klasie Fixture A, która jest zależna od klasy Fixture B dodajemy taki oto krótki 
+wpis:
+
+    protected $dependentClasses = array(
+          B::NAME,
+      );
+
+Teraz za każdym razem, gdy będziemy próbowali wczytać Fixture A, nasz TestBundle doczyta nam zależy Fixture B.
+
+Wczytywanie zależności
+----------------------
+
+Czas na ostatni krok, jakim jest wczytanie Fixturesów. By móc tego dokonać należy w metodzie kontekstu dodać poniższy
+kod:
+
+    public function mojaMetodaKontekstowa()
+    {
+    $this->loadFixtures(array(
+        KLASA_Z_MOIM_PORZĄDANYM_FIXTUREM::NAME
+    ));
+    // Dalej robie coś tam z Fixturesami
+    }
