@@ -11,6 +11,7 @@ class AppKernel extends Kernel
       new Symfony\Bundle\FrameworkBundle\FrameworkBundle(),
       new Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
       new Doctrine\Bundle\FixturesBundle\DoctrineFixturesBundle(),
+      new Acme\AnimalBundle\AcmeAnimalBundle(),
     );
     return $bundles;
   }

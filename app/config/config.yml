@@ -9,6 +9,7 @@ framework:
     default_locale: en
     trusted_proxies: ~
     session: ~
+    test: ~
     
 doctrine:
     dbal:

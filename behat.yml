@@ -1,0 +1,9 @@
+default:
+  formatter:
+    name: progress
+  extensions:
+    Behat\MinkExtension\Extension:
+      goutte: ~
+      selenium2:
+        browser: 'chrome'
+    Behat\Symfony2Extension\Extension: ~

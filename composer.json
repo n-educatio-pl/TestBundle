@@ -14,12 +14,15 @@
         "doctrine/doctrine-fixtures-bundle": "dev-master",
         "doctrine/data-fixtures": "dev-master",
         "behat/mink-extension": "2.0.*@dev",
+        "behat/mink-goutte-driver": "*",
+        "behat/mink-selenium2-driver": "*",
         "behat/symfony2-extension": "*",
         "mockery/mockery": ">=0.7.2"
     },
     "autoload": {
         "psr-0": {
-            "Neducatio\\TestBundle\\": "src/"
+            "Neducatio\\TestBundle\\": "src/",
+            "Acme\\AnimalBundle\\": "testapp/"
         }
     }
 }
