@@ -165,8 +165,8 @@ kod:
 
     public function mojaMetodaKontekstowa()
     {
-    $this->loadFixtures(array(
-      KLASA_Z_MOIM_PORZĄDANYM_FIXTUREM::NAME
-    ));
-    // Dalej robie coś tam z Fixturesami
+      $this->loadFixtures(array(
+        KLASA_Z_MOIM_PORZĄDANYM_FIXTUREM::NAME
+      ));
+      // Dalej robie coś tam z Fixturesami
     }
