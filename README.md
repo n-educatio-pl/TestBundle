@@ -1,4 +1,0 @@
-TestBundle
-==========
-
-Fixtures and Personas
