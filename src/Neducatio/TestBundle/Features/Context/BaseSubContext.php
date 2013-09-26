@@ -43,7 +43,7 @@ abstract class BaseSubContext extends BehatContext implements KernelAwareInterfa
   /**
    * Loads fixtures to test database.
    * If you want to run test using browser, you must point prod DB to test DB.
-   * 
+   *
    * @param array $fixtureClasses Fixture classes namespaces
    */
   public function loadFixtures(array $fixtureClasses)
@@ -54,8 +54,26 @@ abstract class BaseSubContext extends BehatContext implements KernelAwareInterfa
   }
 
   /**
+   * Gets Reference
+   *
+   * @param string $reference Reference's name
+   *
+   * @throws \RuntimeException
+   *
+   * @return object Reference to object
+   */
+  public function getReference($reference)
+  {
+    if ($this->fixtureLoader === null) {
+      throw new \RuntimeException('Fixtures are not loaded');
+    }
+
+    return $this->fixtureLoader->getReference($reference);
+  }
+
+  /**
    * Translate given message, optional array with parameters and lang for translation
-   * 
+   *
    * @param string $message    Message to translate
    * @param array  $parameters Parameters for translation
    * @param string $lang       Language for translation (default pl)

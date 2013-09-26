@@ -20,7 +20,7 @@ class TomAndJerryContext extends BaseSubContext
     );
     $this->loadFixtures($fixtures);
   }
-  
+
   /**
    * @When /^Tom eats Jerry$/
    */
@@ -37,5 +37,5 @@ class TomAndJerryContext extends BaseSubContext
     throw new PendingException();
   }
 
-  
+
 }

@@ -49,8 +49,6 @@ class BaseSubContextTest extends SubContextTestCase
   }
 
   /**
-   * Do sth.
-   *
    * @test
    */
   public function translate_shouldCallTransMethodOnTranslator()
@@ -72,6 +70,32 @@ class BaseSubContextTest extends SubContextTestCase
       \Neducatio\TestBundle\Tests\DataFixtures\FakeFixture\TestableFixture::NAME,
     );
     $this->feature->loadFixtures($fixtures);
+  }
+
+  /**
+   * @test
+   *
+   * @expectedException RuntimeException
+   * @expectedExceptionMessage Fixtures are not loaded
+   */
+  public function getReference_fixturesNotLoaded_shouldThrowRuntimeException()
+  {
+    $this->feature->getReference('ref');
+  }
+
+  /**
+   * @test
+   *
+   * @expectedException PHPUnit_Framework_Error_Notice
+   * @expectedExceptionMessage Undefined index: ref
+   */
+  public function getReference_fixtureLoaded_shouldReturnReferenceToThatFixture()
+  {
+    $fixtures = array(
+      \Neducatio\TestBundle\Tests\DataFixtures\FakeFixture\TestableFixture::NAME,
+    );
+    $this->feature->loadFixtures($fixtures);
+    $this->feature->getReference('ref');
   }
 
   private function getKernelMock()
