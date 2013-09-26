@@ -10,12 +10,31 @@ Instalacja
 
 Zmiany dla pliku composer.json
 
+    "repositories": [
+        ...
+        {
+            "type": "package",
+            "package": {
+                "name": "n-educatio/testbundle",
+                "version": "dev-master",
+                "source": {
+                    "type": "git",
+                    "url": "git@github.com:n-educatio/TestBundle.git",
+                    "reference": "master"
+                }
+            }
+        }
+    ],
+    ...
     "require": {
+        ...
         "n-educatio/testbundle": "dev-master"
-    }
+    },
+    ...
     "autoload": {
         "psr-0": { 
-          "Neducatio\\TestBundle": "vendor/n-educatio/testbundle/src"
+            ...
+            "Neducatio\\TestBundle": "vendor/n-educatio/testbundle/src"
         }
     }
     
@@ -133,8 +152,8 @@ Robimy to w bardzo prosty sposób. W klasie Fixture A, która jest zależna od k
 wpis:
 
     protected $dependentClasses = array(
-          B::NAME,
-      );
+      B::NAME,
+    );
 
 Teraz za każdym razem, gdy będziemy próbowali wczytać Fixture A, nasz TestBundle doczyta nam zależny Fixture B.
 
@@ -147,7 +166,7 @@ kod:
     public function mojaMetodaKontekstowa()
     {
     $this->loadFixtures(array(
-        KLASA_Z_MOIM_PORZĄDANYM_FIXTUREM::NAME
+      KLASA_Z_MOIM_PORZĄDANYM_FIXTUREM::NAME
     ));
     // Dalej robie coś tam z Fixturesami
     }
