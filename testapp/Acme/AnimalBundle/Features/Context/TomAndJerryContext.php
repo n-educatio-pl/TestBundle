@@ -3,7 +3,6 @@
 namespace Acme\AnimalBundle\Features\Context;
 
 use Neducatio\TestBundle\Features\Context\BaseSubContext;
-use Behat\Behat\Exception\PendingException;
 
 /**
  * Feature context.
@@ -11,14 +10,15 @@ use Behat\Behat\Exception\PendingException;
 class TomAndJerryContext extends BaseSubContext
 {
   /**
-   * @Given /^cat Tom$/
+   * @Given /^cat Tom and alive mouse Jerry$/
    */
-  public function loadTom()
+  public function loadTomAndJerry()
   {
     $fixtures = array(
       \Acme\AnimalBundle\DataFixtures\ORM\LoadTomAnimalData::NAME,
     );
     $this->loadFixtures($fixtures);
+    assertTrue($this->getReference('animalJerry')->isAlive());
   }
 
   /**
@@ -26,7 +26,7 @@ class TomAndJerryContext extends BaseSubContext
    */
   public function tomEatsJerry()
   {
-    throw new PendingException();
+    $this->getReference('animalTom')->eatToy();
   }
 
   /**
@@ -34,7 +34,7 @@ class TomAndJerryContext extends BaseSubContext
    */
   public function jerryIsNoMore()
   {
-    throw new PendingException();
+    assertFalse($this->getReference('animalJerry')->isAlive());
   }
 
 
