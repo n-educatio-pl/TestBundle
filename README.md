@@ -40,6 +40,10 @@ Następnie instalujemy brakujące vendorsy:
 ```
 php composer.phar install
 ```
+
+Przykład użycia fixturesów
+------------------------
+Przykład można zobaczyć [tutaj](https://github.com/n-educatio/TestBundle/tree/master/testapp)
     
 Przykład użycia uchwytów
 ------------------------
@@ -142,9 +146,10 @@ Obie persony w tym przypadku muszą dziedziczyć po klasie [LoadActorUserData](h
 Oczywistym staje się fakt, że każdy rodzaj person będzie miał analogicznie budowaną klasę, po której dziedziczą persony
 tego samego rodzaju.
 
-Dodawanie zależności
---------------------
+Zależności
+----------
 
+###Dodawanie
 Przejdżmy teraz do sedna możliwości naszego TestBundle. Załóżmy, że chcemy dodać do naszych Fixturesów pewne zależności.
 Robimy to w bardzo prosty sposób. W klasie Fixture A, która jest zależna od klasy Fixture B dodajemy taki oto krótki 
 wpis:
@@ -157,9 +162,7 @@ protected $dependentClasses = array(
 
 Teraz za każdym razem, gdy będziemy próbowali wczytać Fixture A, nasz TestBundle doczyta nam zależny Fixture B.
 
-Wczytywanie zależności
-----------------------
-
+###Wczytywanie
 Czas na ostatni krok, jakim jest wczytanie Fixturesów. By móc tego dokonać należy w metodzie kontekstu dodać poniższy
 kod:
 
@@ -169,6 +172,8 @@ public function mojaMetodaKontekstowa()
   $this->loadFixtures(array(
     KLASA_Z_MOIM_PORZADANYM_FIXTUREM::NAME
   ));
-  // Dalej robie coś tam z Fixturesami
+  // Dalej robie coś tam z Fixturesami 
+  // Dla przykładu:
+  $this->getReference('mojaReferencja')->jakasMetoda();
 }
 ```
