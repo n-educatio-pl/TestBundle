@@ -2,11 +2,23 @@
 
 namespace Acme\AnimalBundle\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
+
 /**
  * Animal class
+ * 
+ * @ORM\Entity
+ * @ORM\Table(name="animal")
  */
 class Animal
 {
+  /**
+   * @var integer $id
+   * @ORM\Column(name="id", type="integer")
+   * @ORM\Id
+   * @ORM\GeneratedValue(strategy="AUTO")
+   */
+  private $id;
   private $name;
   private $toy;
   private $live = true;

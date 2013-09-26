@@ -4,12 +4,12 @@ namespace Acme\AnimalBundle\DataFixtures\ORM;
 /**
  * Tom
  */
-class LoadTomCatData extends LoadAnimalData
+class LoadTomAnimalData extends LoadAnimalData
 {
   const NAME = __CLASS__;
   protected $order = 2;
   protected $dependentClasses = array(
-    LoadJerryMouseData::NAME,
+    LoadJerryAnimalData::NAME,
   );
 
   protected $animalData = array(

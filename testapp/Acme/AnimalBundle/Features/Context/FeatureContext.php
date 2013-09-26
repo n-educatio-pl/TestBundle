@@ -18,7 +18,7 @@ class FeatureContext extends BaseFeatureContext
   {
     parent::__construct($parameters);
     $parameters['builder'] = new PageObjectBuilder();
-//    $landingContext = new LandingContext($parameters);
-//    $this->useContext('landing_context', $landingContext);
+    $animalContext = new TomAndJerryContext($parameters);
+    $this->useContext('animal_context', $animalContext);
   }
 }

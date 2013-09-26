@@ -4,7 +4,7 @@ namespace Acme\AnimalBundle\DataFixtures\ORM;
 /**
  * Jerry
  */
-class LoadJerryMouseData extends LoadAnimalData
+class LoadJerryAnimalData extends LoadAnimalData
 {
   const NAME = __CLASS__;
   protected $order = 1;
