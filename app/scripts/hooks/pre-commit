@@ -113,7 +113,7 @@ foreach ($output as $file) {
 
     $phpMdRulesetPath = 'app/phpmdRuleset.xml';
     $outputMd = array();
-    exec("phpmd $fileEsc text $phpMdRulesetPath 2>&1" , $outputMd, $returnMd);
+    exec("php vendor/phpmd/phpmd/src/bin/phpmd $fileEsc text $phpMdRulesetPath 2>&1" , $outputMd, $returnMd);
     if ($returnMd != 0) {
         echo $colors->getColoredString("\nMess detector: FAILED", "gray", "red") . "\n";
         $exitStatus = 1;
@@ -126,7 +126,7 @@ foreach ($output as $file) {
 
 
     $outputCs = array();
-    exec("phpcs --ignore='Resources/public' --standard=Symfony2 $fileEsc 2>&1" , $outputCs, $returnCs);
+    exec("php vendor/zerkalica/phpcs/scripts/phpcs --ignore='Resources/public' --standard=app/phpcsRuleset.xml $fileEsc 2>&1" , $outputCs, $returnCs);
     if ($returnCs != 0) {
         echo $colors->getColoredString("\nCoding standards: FAILED", "gray", "red") . "\n";
         $exitStatus = 1;

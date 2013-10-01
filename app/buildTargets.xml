@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+  <property name="source" value="src"/>
+  <target name="clear">
+    <echo>--------------------------------------------</echo>
+    <echo>--------------------------------------------</echo>
+    <echo>--------------------------------------------</echo>
+    <echo>-------------B u i l d----------------------</echo>
+    <echo>--------------------------------------------</echo>
+    <echo>--------------------------------------------</echo>
+    <echo>--------------------------------------------</echo>
+    <echo>--------------------------------------------</echo>
+  </target>
+
+  <!-- GIT HOOKS -->
+  <target name="copyGitHooks" description="Copy git hooks that can be used before commit (style checking etc.)">
+    <echo>Copy git hooks that can be used before commit (style checking etc.)</echo>
+    <copy file="app/scripts/hooks/pre-commit" tofile=".git/hooks/pre-commit"/>
+    <chmod file=".git/hooks/pre-commit" perm="+x"/>
+    <chmod file="app/scripts/hooks/pre-commit" perm="+x"/>
+  </target>
+
+  <!-- COMPOSER -->
+  <target name="composerget.check">
+    <available file="composer.phar" property="composerget.present"/>
+  </target>
+  <target name="composerget" depends="composerget.check" unless="composerget.present" description="Composer installation">
+    <exec executable="/bin/bash">
+      <arg value="-c" />
+      <arg value="curl -s https://getcomposer.org/installer | php" />
+    </exec>
+  </target>
+
+  <!-- VENDORS -->
+  <target name="installvendors" description="Composer update dependencies">
+    <exec executable="/usr/bin/php">
+      <arg value="composer.phar" />
+      <arg value="install" />
+    </exec>
+  </target>
+  <target name="installvendors-dev" description="Composer update dependencies with require-dev">
+    <exec executable="/usr/bin/php">
+      <arg value="composer.phar" />
+      <arg value="install" />
+      <arg value="--dev" />
+    </exec>
+  </target>
+
+  <!-- CLEAN BUILD -->
+  <target name="clean" description="Clean up and create artifact directories">
+    <delete dir="${basedir}/build/api"/>
+    <delete dir="${basedir}/build/code-browser"/>
+    <delete dir="${basedir}/build/coverage"/>
+    <delete dir="${basedir}/build/logs"/>
+    <delete dir="${basedir}/build/pdepend"/>
+    <delete dir="${basedir}/build/behat"/>
+
+    <mkdir dir="${basedir}/build/api"/>
+    <mkdir dir="${basedir}/build/code-browser"/>
+    <mkdir dir="${basedir}/build/coverage"/>
+    <mkdir dir="${basedir}/build/logs"/>
+    <mkdir dir="${basedir}/build/pdepend"/>
+    <mkdir dir="${basedir}/build/behat"/>
+  </target>
+
+  <!-- TESTS -->
+  <target name="phpunit-with-coverage" description="Run unit tests using PHPUnit and generates junit.xml and clover.xml">
+    <exec dir="${basedir}/app" executable="${basedir}/vendor/bin/phpunit" failonerror="true">
+      <arg line="--configuration phpunitCoverage.xml.dist" />
+    </exec>
+  </target>
+  <target name="phpunit" description="Run unit tests using PHPUnit and generates junit.xml and clover.xml">
+    <exec dir="${basedir}/app" executable="${basedir}/vendor/bin/phpunit" failonerror="true">
+      <arg line="--configuration phpunit.xml.dist" />
+    </exec>
+  </target>
+    <target name="behat" description="Run behat tests">
+    <exec executable="${basedir}/t" dir="${basedir}" failonerror="true">
+      <arg line="behat --tags ~@wip" />
+    </exec>
+  </target>
+
+  <!-- METRICS -->
+  <target name="sonar" description="Run sonar to analyze PHP code">
+    <exec executable="sonar-runner" dir="${basedir}/app/sonar/php" failonerror="true" />
+  </target>
+
+  <!-- SYNCHRONIZATION VAGRANT WITH LOCAL FILES -->
+  <target name="sync" description="Synchronize dev files to local">
+    <exec executable="rsync" dir="${basedir}" failonerror="true">
+      <arg line="-rtvau --delete /home/vagrant/www/cb/ /vagrant/cb/ --exclude-from app/config/rsync_exclude.txt" />
+    </exec>
+  </target>
+  <target name="syncAll" description="Synchronize all dev files (with vendors) to local">
+    <exec executable="rsync" dir="${basedir}" failonerror="true">
+      <arg line="-rtvau --delete /home/vagrant/www/cb/ /vagrant/cb/ --exclude-from app/config/rsync_all_exclude.txt" />
+    </exec>
+  </target>
+
+</project>
+
