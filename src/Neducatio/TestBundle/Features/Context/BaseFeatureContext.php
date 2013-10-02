@@ -66,7 +66,7 @@ abstract class BaseFeatureContext extends MinkContext
   /**
    * Enables JS in scenario with tag javascript
    *
-   * @BeforeScenario @javascript
+   * @BeforeScenario @mink:selenium2
    */
   public function enableJs()
   {
