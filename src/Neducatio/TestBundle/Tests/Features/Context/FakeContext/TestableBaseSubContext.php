@@ -8,4 +8,5 @@ use Neducatio\TestBundle\Features\Context\BaseSubContext;
  */
 class TestableBaseSubContext extends BaseSubContext
 {
+  public $kernel;
 }
