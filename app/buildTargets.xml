@@ -88,12 +88,12 @@
   <!-- SYNCHRONIZATION VAGRANT WITH LOCAL FILES -->
   <target name="sync" description="Synchronize dev files to local">
     <exec executable="rsync" dir="${basedir}" failonerror="true">
-      <arg line="-rtvau --delete /home/vagrant/www/cb/ /vagrant/cb/ --exclude-from app/config/rsync_exclude.txt" />
+      <arg line="-rtvau --delete /home/vagrant/www/TestBundle/ /vagrant/TestBundle/ --exclude-from app/config/rsync_exclude.txt" />
     </exec>
   </target>
   <target name="syncAll" description="Synchronize all dev files (with vendors) to local">
     <exec executable="rsync" dir="${basedir}" failonerror="true">
-      <arg line="-rtvau --delete /home/vagrant/www/cb/ /vagrant/cb/ --exclude-from app/config/rsync_all_exclude.txt" />
+      <arg line="-rtvau --delete /home/vagrant/www/TestBundle/ /vagrant/TestBundle/ --exclude-from app/config/rsync_all_exclude.txt" />
     </exec>
   </target>
 
