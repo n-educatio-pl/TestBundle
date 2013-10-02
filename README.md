@@ -41,8 +41,19 @@ Następnie instalujemy brakujące vendorsy:
 php composer.phar install
 ```
 
+Jak uruchomić testy TestBundle
+------------------------------
+
+Aby uruchomić testy tej paczki, trzeba stworzyć bazę danych (o ile już nie istnieje na devie) zgodną z plikiem **config.yml**. Baza ta musi zawierać pustą tabelę animal, zatem wystarczy wykonać poniższe polecenia:
+``` sql
+CREATE DATABASE neducatio_testbundle;
+CREATE TABLE animal();
+```
+
+Następnie można uruchomić testy poleceniem: t phpunit, etc.
+
 Przykład użycia fixturesów
-------------------------
+--------------------------
 Przykład można zobaczyć [tutaj](https://github.com/n-educatio/TestBundle/tree/master/testapp)
     
 Przykład użycia uchwytów
