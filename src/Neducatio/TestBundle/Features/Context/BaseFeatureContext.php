@@ -35,7 +35,8 @@ abstract class BaseFeatureContext extends MinkContext implements KernelAwareInte
 
   /**
    * Sets HttpKernel instance.
-   * This method will be automatically called by Symfony2Extension ContextInitializer.
+   * 
+   * This method will be automatically called by Symfony2Extension ContextInitializer. 
    *
    * @param KernelInterface $kernel Kernel
    */
