@@ -23,8 +23,10 @@ class BaseSubContextTest extends SubContextTestCase
     $this->translator = m::mock('Symfony\Bundle\FrameworkBundle\Translation\Translator');
     $builder = m::mock('Neducatio\TestBundle\PageObject\PageObjectBuilder');
     $builder->shouldReceive('build')->andReturn('page');
-    $this->feature = new TestableBaseSubContext(array('builder' => $builder));
+    $kernel = $this->getKernelMock();
+    $this->feature = new TestableBaseSubContext($kernel);
     $this->feature->setParentContext($this->getParentContextMock());
+    $this->feature->setBuilder($builder);
   }
 
   /**
@@ -35,6 +37,22 @@ class BaseSubContextTest extends SubContextTestCase
   public function __construct_shouldCreateInstanceOf()
   {
     $this->assertInstanceOf('Neducatio\TestBundle\Features\Context\BaseSubContext', $this->feature);
+  }
+
+  /**
+   * set builder test
+   *
+   * @test
+   */
+  public function setBuilder_builderShouldBeAvailableinContext()
+  {
+    $builder = m::mock('Neducatio\TestBundle\PageObject\PageObjectBuilder');
+    $builder->shouldReceive('build')->andReturn('page');
+    $kernel = $this->getKernelMock();
+    $feature = new TestableBaseSubContext($kernel);
+    $this->assertNull($feature->builder);
+    $feature->setBuilder($builder);
+    $this->assertNotNull($feature->builder);
   }
 
   /**
@@ -54,18 +72,19 @@ class BaseSubContextTest extends SubContextTestCase
   public function translate_shouldCallTransMethodOnTranslator()
   {
     $this->translator->shouldReceive('trans')->with('messageToTrans', array(), 'messages', 'pl')->once();
-    $this->feature->setKernel($this->getKernelMock());
     $this->feature->translate('messageToTrans');
   }
 
   /**
    * Do sth.
+   * Kernel is set to null to restore test conditions from version for symfony 2.3
    *
    * @group integration
    * @test
    */
   public function loadFixtures_someFixturesPassed_shouldThrowException()
   {
+    $this->feature->kernel = null;
     $fixtures = array(
       \Neducatio\TestBundle\Tests\DataFixtures\FakeFixture\TestableFixture::NAME,
     );
@@ -84,13 +103,18 @@ class BaseSubContextTest extends SubContextTestCase
   }
 
   /**
+   * Kernel is set to null to restore test conditions from version for symfony 2.3
+   *
    * @test
    *
-   * @expectedException PHPUnit_Framework_Error_Notice
+   * PHPUnit_Framework_Error_Notice => ErrorException in old symfony version
+   *
+   * @expectedException ErrorException
    * @expectedExceptionMessage Undefined index: ref
    */
   public function getReference_fixtureLoaded_shouldReturnReferenceToThatFixture()
   {
+    $this->feature->kernel = null;
     $fixtures = array(
       \Neducatio\TestBundle\Tests\DataFixtures\FakeFixture\TestableFixture::NAME,
     );

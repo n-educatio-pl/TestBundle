@@ -31,7 +31,7 @@ class FixtureDependencyInvoker
     $container                      = $kernel->getContainer();
     $purger                         = new ORMPurger();
 
-    $this->em                       = $container->get('doctrine')->getManager();
+    $this->em                       = $container->get('doctrine')->getEntityManager();
     $this->executor                 = new ORMExecutor($this->em, $purger);
     $this->fixtureExecutor          = new FixtureExecutor($this->executor);
     $this->componentBuilder         = new ComponentBuilder($container);

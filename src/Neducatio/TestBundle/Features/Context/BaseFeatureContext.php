@@ -1,7 +1,7 @@
 <?php
 namespace Neducatio\TestBundle\Features\Context;
 
-use Behat\MinkExtension\Context\MinkContext;
+use Behat\BehatBundle\Context\MinkContext;
 
 // @codeCoverageIgnoreStart
 require_once 'PHPUnit/Autoload.php';
@@ -13,18 +13,19 @@ require_once 'PHPUnit/Framework/Assert/Functions.php';
  */
 abstract class BaseFeatureContext extends MinkContext
 {
-  protected $parameters;
+  protected $kernel;
   protected $page;
   protected $usingJs = false;
 
   /**
    * Initializes context with parameters from behat.yml.
    *
-   * @param array $parameters Parameters
+   * @param Kernel $kernel Symfony kernel
    */
-  public function __construct(array $parameters)
+  public function __construct($kernel)
   {
-    $this->parameters = $parameters;
+    parent::__construct($kernel);
+    $this->kernel = $kernel;
   }
 
   /**

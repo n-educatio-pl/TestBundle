@@ -2,15 +2,14 @@
 namespace Neducatio\TestBundle\Features\Context;
 
 use Behat\Behat\Context\BehatContext;
-use Symfony\Component\HttpKernel\KernelInterface;
-use Behat\Symfony2Extension\Context\KernelAwareInterface;
 use Neducatio\TestBundle\DataFixtures\FixtureLoader;
 use Neducatio\TestBundle\DataFixtures\FixtureDependencyInvoker;
+use Neducatio\TestBundle\PageObject\PageObjectBuilder;
 
 /**
  * Feature context.
  */
-abstract class BaseSubContext extends BehatContext implements KernelAwareInterface
+abstract class BaseSubContext extends BehatContext
 {
   protected $kernel;
   protected $fixtureLoader;
@@ -19,25 +18,24 @@ abstract class BaseSubContext extends BehatContext implements KernelAwareInterfa
   protected static $page = null;
 
   /**
-   * Initializes context with parameters from behat.yml.
+   * Initializes context with symfony kernel
    *
-   * @param array $parameters Parameters
+   * @param Symfony\Component\HttpKernel\KernelInterface $kernel symfony kernel
    */
-  public function __construct(array $parameters)
+  public function __construct($kernel)
   {
-    $this->parameters = $parameters;
-    $this->builder = $parameters['builder'];
+      $this->kernel = $kernel;
+      $this->builder = null;
   }
 
   /**
-   * Sets HttpKernel instance.
-   * This method will be automatically called by Symfony2Extension ContextInitializer.
+   * Set page object builder
    *
-   * @param KernelInterface $kernel Kernel
+   * @param \Neducatio\TestBundle\PageObject\PageObjectBuilder $builder page object builder
    */
-  public function setKernel(KernelInterface $kernel)
+  public function setBuilder(PageObjectBuilder $builder)
   {
-      $this->kernel = $kernel;
+      $this->builder = $builder;
   }
 
   /**

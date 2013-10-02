@@ -2,6 +2,7 @@
 namespace Neducatio\TestBundle\Tests\Features\Context;
 
 use Neducatio\TestBundle\Tests\Features\Context\FakeContext\TestableBaseFeatureContext;
+use Mockery as m;
 
 /**
  * Tests
@@ -17,7 +18,8 @@ class BaseFeatureContextTest extends \PHPUnit_Framework_TestCase
    */
   public function setUp()
   {
-    $this->feature = new TestableBaseFeatureContext(array());
+    $kernel = m::mock('Symfony\Component\HttpKernel\KernelInterface');
+    $this->feature = new TestableBaseFeatureContext($kernel);
   }
 
   /**
