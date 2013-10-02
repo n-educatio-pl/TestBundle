@@ -1,0 +1,8 @@
+app/cache/*
+vendor/
+.git/
+nbproject/
+node_modules/
+tmp/
+.vagrant/
+Vagrantfile

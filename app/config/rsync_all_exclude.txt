@@ -1,0 +1,6 @@
+app/cache/*
+.git/
+nbproject/
+tmp/
+.vagrant/
+Vagrantfile
