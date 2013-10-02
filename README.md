@@ -41,8 +41,8 @@ Następnie instalujemy brakujące vendorsy:
 php composer.phar install
 ```
 
-Jak uruchomić testy TestBundle
-------------------------------
+Uruchamianie testów paczki TestBundle
+-------------------------------------
 
 Aby uruchomić testy tej paczki, trzeba stworzyć bazę danych (o ile już nie istnieje na devie) zgodną z plikiem **config.yml**. Baza ta musi zawierać pustą tabelę animal, zatem wystarczy wykonać poniższe polecenia:
 ``` sql
