@@ -25,7 +25,6 @@ class BaseSubContextTest extends SubContextTestCase
     $builder->shouldReceive('build')->andReturn('page');
     $kernel = $this->getKernelMock();
     $this->feature = new TestableBaseSubContext($kernel);
-    $this->feature->setParentContext($this->getParentContextMock());
     $this->feature->setBuilder($builder);
   }
 
@@ -62,6 +61,7 @@ class BaseSubContextTest extends SubContextTestCase
    */
   public function getPage_pageIsSet_shouldReturnGivenPage()
   {
+    $this->feature->setParentContext($this->getParentContextMock());
     $this->feature->setPage('page');
     $this->assertSame('page', $this->feature->getPage());
   }
@@ -77,27 +77,39 @@ class BaseSubContextTest extends SubContextTestCase
 
   /**
    * Do sth.
-   * Kernel is set to null to restore test conditions from version for symfony 2.3
    *
-   * @group integration
    * @test
+   * @expectedException RuntimeException
+   * @expectedExceptionMessage Sub context has no parent
    */
-  public function loadFixtures_someFixturesPassed_shouldThrowException()
+  public function loadFixtures_contextWithoutParent_shouldThrowException()
   {
     $this->feature->kernel = null;
-    $fixtures = array(
-      \Neducatio\TestBundle\Tests\DataFixtures\FakeFixture\TestableFixture::NAME,
-    );
-    $this->feature->loadFixtures($fixtures);
+    $this->feature->loadFixtures(array());
   }
 
   /**
-   * @test
+   * Do sth.
    *
-   * @expectedException RuntimeException
-   * @expectedExceptionMessage Fixtures are not loaded
+   * @test
    */
-  public function getReference_fixturesNotLoaded_shouldThrowRuntimeException()
+  public function loadFixtures_contextWithParent_shouldCallLoadFixturesOnMainContext()
+  {
+    $parent = $this->getParentContextMock();
+    $mainContext = $parent->getMainContext();
+    $mainContext->shouldReceive('loadFixtures')->with(array())->once();
+    $this->feature->setParentContext($parent);
+    $this->feature->loadFixtures(array());
+  }
+
+  /**
+   * Do sth.
+   *
+   * @test
+   * @expectedException RuntimeException
+   * @expectedExceptionMessage Sub context has no parent
+   */
+  public function getReference_contextWithoutParent_shouldThrowException()
   {
     $this->feature->getReference('ref');
   }
@@ -106,19 +118,14 @@ class BaseSubContextTest extends SubContextTestCase
    * Kernel is set to null to restore test conditions from version for symfony 2.3
    *
    * @test
-   *
-   * PHPUnit_Framework_Error_Notice => ErrorException in old symfony version
-   *
-   * @expectedException ErrorException
-   * @expectedExceptionMessage Undefined index: ref
    */
-  public function getReference_fixtureLoaded_shouldReturnReferenceToThatFixture()
+  public function getReference_contextWithParent_shouldCallGetReferenceOnMainContext()
   {
     $this->feature->kernel = null;
-    $fixtures = array(
-      \Neducatio\TestBundle\Tests\DataFixtures\FakeFixture\TestableFixture::NAME,
-    );
-    $this->feature->loadFixtures($fixtures);
+    $parent = $this->getParentContextMock();
+    $mainContext = $parent->getMainContext();
+    $mainContext->shouldReceive('getReference')->with('ref')->once();
+    $this->feature->setParentContext($parent);
     $this->feature->getReference('ref');
   }
 

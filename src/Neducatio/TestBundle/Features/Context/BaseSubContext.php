@@ -2,9 +2,8 @@
 namespace Neducatio\TestBundle\Features\Context;
 
 use Behat\Behat\Context\BehatContext;
-use Neducatio\TestBundle\DataFixtures\FixtureLoader;
-use Neducatio\TestBundle\DataFixtures\FixtureDependencyInvoker;
 use Neducatio\TestBundle\PageObject\PageObjectBuilder;
+use Symfony\Component\HttpKernel\KernelInterface;
 
 /**
  * Feature context.
@@ -12,7 +11,6 @@ use Neducatio\TestBundle\PageObject\PageObjectBuilder;
 abstract class BaseSubContext extends BehatContext
 {
   protected $kernel;
-  protected $fixtureLoader;
   protected $parameters;
   protected $builder;
   protected static $page = null;
@@ -22,7 +20,7 @@ abstract class BaseSubContext extends BehatContext
    *
    * @param Symfony\Component\HttpKernel\KernelInterface $kernel symfony kernel
    */
-  public function __construct($kernel)
+  public function __construct(KernelInterface $kernel)
   {
       $this->kernel = $kernel;
       $this->builder = null;
@@ -38,35 +36,16 @@ abstract class BaseSubContext extends BehatContext
       $this->builder = $builder;
   }
 
-  /**
-   * Loads fixtures to test database.
-   * If you want to run test using browser, you must point prod DB to test DB.
-   *
-   * @param array $fixtureClasses Fixture classes namespaces
-   */
-  public function loadFixtures(array $fixtureClasses)
+  public function loadFixtures($fixtures)
   {
-    $dependencies = new FixtureDependencyInvoker($this->kernel);
-    $this->fixtureLoader = new FixtureLoader($dependencies, $fixtureClasses);
-    $this->fixtureLoader->load();
+    $this->checkIfHasParent();
+    return $this->getMainContext()->loadFixtures($fixtures);
   }
 
-  /**
-   * Gets Reference
-   *
-   * @param string $reference Reference's name
-   *
-   * @throws \RuntimeException
-   *
-   * @return object Reference to object
-   */
   public function getReference($reference)
   {
-    if ($this->fixtureLoader === null) {
-      throw new \RuntimeException('Fixtures are not loaded');
-    }
-
-    return $this->fixtureLoader->getReference($reference);
+    $this->checkIfHasParent();
+    return $this->getMainContext()->getReference($reference);
   }
 
   /**
@@ -103,6 +82,13 @@ abstract class BaseSubContext extends BehatContext
   public function setPage($pageObjectName)
   {
     self::$page = $this->builder->build($pageObjectName, $this->getBrowserPage());
+  }
+
+  private function checkIfHasParent()
+  {
+    if ($this->getMainContext() instanceof $this) {
+      throw new \RuntimeException("Sub context has no parent");
+    }
   }
 
   private function getBrowserPage()

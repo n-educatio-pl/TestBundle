@@ -19,6 +19,11 @@
         "behat/symfony2-extension": "*",
         "mockery/mockery": ">=0.7.2"
     },
+    "require-dev": {
+        "phpunit/phpunit": "3.7.*",
+        "phpmd/phpmd": "dev-master",
+        "zerkalica/phpcs": "dev-master"
+    },
     "autoload": {
         "psr-0": {
             "Neducatio\\TestBundle\\": "src/",

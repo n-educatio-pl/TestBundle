@@ -23,6 +23,14 @@ class BaseFeatureContextTest extends \PHPUnit_Framework_TestCase
   }
 
   /**
+   * Tear down
+   */
+  public function tearDown()
+  {
+    m::close();
+  }
+
+  /**
    * Do sth.
    *
    * @test
@@ -30,6 +38,48 @@ class BaseFeatureContextTest extends \PHPUnit_Framework_TestCase
   public function __construct_shouldCreateInstanceOf()
   {
     $this->assertInstanceOf('Neducatio\TestBundle\Features\Context\BaseFeatureContext', $this->feature);
+  }
+
+  /**
+   * Do sth.
+   *
+   * @group integration
+   * @test
+   */
+  public function loadFixtures_someFixturesPassed_shouldThrowException()
+  {
+    $this->feature->kernel = null;
+    $fixtures = array(
+      \Neducatio\TestBundle\Tests\DataFixtures\FakeFixture\TestableFixture::NAME,
+    );
+    $this->feature->loadFixtures($fixtures);
+  }
+
+  /**
+   * @test
+   *
+   * @expectedException RuntimeException
+   * @expectedExceptionMessage Fixtures are not loaded
+   */
+  public function getReference_fixturesNotLoaded_shouldThrowRuntimeException()
+  {
+    $this->feature->getReference('ref');
+  }
+
+  /**
+   * @test
+   *
+   * @expectedException ErrorException
+   * @expectedExceptionMessage Undefined index: ref
+   */
+  public function getReference_fixtureLoaded_shouldReturnReferenceToThatFixture()
+  {
+    $this->feature->kernel = null;
+    $fixtures = array(
+      \Neducatio\TestBundle\Tests\DataFixtures\FakeFixture\TestableFixture::NAME,
+    );
+    $this->feature->loadFixtures($fixtures);
+    $this->feature->getReference('ref');
   }
 
   /**
@@ -51,5 +101,14 @@ class BaseFeatureContextTest extends \PHPUnit_Framework_TestCase
   {
     $this->feature->enableJs();
     $this->assertTrue($this->feature->usingJs());
+  }
+
+  private function getKernelMock()
+  {
+    $container = m::mock('stdClass');
+    $kernel = m::mock('Symfony\Component\HttpKernel\KernelInterface');
+    $kernel->shouldReceive('getContainer')->andReturn($container);
+
+    return $kernel;
   }
 }
