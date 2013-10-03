@@ -30,12 +30,13 @@ abstract class BasePageObject
   /**
    * Gets hook
    *
-   * @param string $key Hook key
+   * @param string  $key   Hook key
+   * @param integer $place Index of given node (if exists many nodes with the same key)
    *
    * @return NodeElement
    */
-  public function get($key)
+  public function get($key, $place = 0)
   {
-    return $this->builder->getHarvester()->get($key);
+    return $this->builder->getHarvester()->get($key, $place);
   }
 }
