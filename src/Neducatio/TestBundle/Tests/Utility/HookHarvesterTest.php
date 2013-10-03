@@ -12,6 +12,15 @@ use \Mockery as m;
  */
 class HookHarvesterTest extends \PHPUnit_Framework_TestCase
 {
+  private $harvester;
+  /**
+   * Do sth.
+   */
+  public function setUp()
+  {
+    $this->harvester = new HookHarvester();
+  }
+
   /**
    * Do sth.
    */
@@ -27,7 +36,7 @@ class HookHarvesterTest extends \PHPUnit_Framework_TestCase
    */
   public function __construct_shouldCreateInstanceOf()
   {
-    $this->assertInstanceOf('Neducatio\TestBundle\Utility\HookHarvester', $this->getHarvester());
+    $this->assertInstanceOf('Neducatio\TestBundle\Utility\HookHarvester', $this->harvester);
   }
 
   /**
@@ -37,8 +46,7 @@ class HookHarvesterTest extends \PHPUnit_Framework_TestCase
    */
   public function getRegister_validHarvestWithoutHooks_shouldReturnEmptyRegister()
   {
-    $harvester = $this->getHarvester();
-    $this->assertCount(0, $harvester->getRegister());
+    $this->assertCount(0, $this->harvester->getRegister());
   }
 
   /**
@@ -50,7 +58,7 @@ class HookHarvesterTest extends \PHPUnit_Framework_TestCase
    */
   public function registerHooks_pageWithoutGivenProofSelector_shouldThrowException()
   {
-    $this->getHarvester()->registerHooks($this->getPageWithResult(), '.t_someSelector');
+    $this->harvester->registerHooks($this->getPageWithResult(), '.t_someSelector');
   }
 
   /**
@@ -63,9 +71,8 @@ class HookHarvesterTest extends \PHPUnit_Framework_TestCase
     $hook1 = $this->getHook('t_hook1');
     $hook2 = $this->getHook('t_hook2');
     $harvest = $this->getNodeElement(array($hook1, $hook2));
-    $harvester = $this->getHarvester();
-    $harvester->registerHooks($this->getPageWithResult($harvest), '.t_someSelector');
-    $this->assertSame(array('hook1', 'hook2'), array_keys($harvester->getRegister()));
+    $this->harvester->registerHooks($this->getPageWithResult($harvest), '.t_someSelector');
+    $this->assertSame(array('hook1', 'hook2'), array_keys($this->harvester->getRegister()));
   }
 
   /**
@@ -78,9 +85,8 @@ class HookHarvesterTest extends \PHPUnit_Framework_TestCase
     $hook1 = $this->getHook('klasa klasa_klas t_hook1 klasa_klas');
     $hook2 = $this->getHook('klasa_ _klasa-klas t_hook2 klasa');
     $harvest = $this->getNodeElement(array($hook1, $hook2));
-    $harvester = $this->getHarvester();
-    $harvester->registerHooks($this->getPageWithResult($harvest), '.t_someSelector');
-    $this->assertSame(array('hook1', 'hook2'), array_keys($harvester->getRegister()));
+    $this->harvester->registerHooks($this->getPageWithResult($harvest), '.t_someSelector');
+    $this->assertSame(array('hook1', 'hook2'), array_keys($this->harvester->getRegister()));
   }
 
   /**
@@ -92,9 +98,8 @@ class HookHarvesterTest extends \PHPUnit_Framework_TestCase
   {
     $hook1 = $this->getHook('t_hook1 t_hook2');
     $harvest = $this->getNodeElement(array($hook1));
-    $harvester = $this->getHarvester();
-    $harvester->registerHooks($this->getPageWithResult($harvest), '.t_someSelector');
-    $this->assertSame(array('hook1', 'hook2'), array_keys($harvester->getRegister()));
+    $this->harvester->registerHooks($this->getPageWithResult($harvest), '.t_someSelector');
+    $this->assertSame(array('hook1', 'hook2'), array_keys($this->harvester->getRegister()));
   }
 
   /**
@@ -106,9 +111,8 @@ class HookHarvesterTest extends \PHPUnit_Framework_TestCase
   {
     $hook1 = $this->getHook('klasa-klas t_hook1 moja_klasa t_hook2 klasa');
     $harvest = $this->getNodeElement(array($hook1));
-    $harvester = $this->getHarvester();
-    $harvester->registerHooks($this->getPageWithResult($harvest), '.t_someSelector');
-    $this->assertSame(array('hook1', 'hook2'), array_keys($harvester->getRegister()));
+    $this->harvester->registerHooks($this->getPageWithResult($harvest), '.t_someSelector');
+    $this->assertSame(array('hook1', 'hook2'), array_keys($this->harvester->getRegister()));
   }
 
   /**
@@ -120,7 +124,7 @@ class HookHarvesterTest extends \PHPUnit_Framework_TestCase
    */
   public function get_notExistingKeyIsPassed_shouldThrowAnException()
   {
-    $this->getHarvester()->get('not_existing_key');
+    $this->harvester->get('not_existing_key');
   }
 
   /**
@@ -132,19 +136,38 @@ class HookHarvesterTest extends \PHPUnit_Framework_TestCase
   {
     $hook = $this->getHook('t_existing_key');
     $harvest = $this->getNodeElement(array($hook));
-    $harvester = $this->getHarvester();
-    $harvester->registerHooks($this->getPageWithResult($harvest), '.t_someSelector');
-    $this->assertSame(get_class($hook), get_class($harvester->get('existing_key')));
+    $this->harvester->registerHooks($this->getPageWithResult($harvest), '.t_someSelector');
+    $this->assertSame(get_class($hook), get_class($this->harvester->get('existing_key')));
   }
 
   /**
    * Do sth.
    *
-   * @return HookHaverster
+   * @test
    */
-  private function getHarvester()
+  public function get_keyWhereAreTwoNodesIsPassed_shouldReturnFirstHook()
   {
-    return new HookHarvester();
+    $hook1 = $this->getHook('t_hook1');
+    $hook2 = $this->getHook('t_hook1');
+    $harvest = $this->getNodeElement(array($hook1, $hook2));
+    $this->harvester->registerHooks($this->getPageWithResult($harvest), '.t_someSelector');
+    $this->assertSame(array('hook1'), array_keys($this->harvester->getRegister()));
+    $this->assertInstanceOf(get_class($hook1), $this->harvester->get('hook1'));
+  }
+
+  /**
+   * Do sth.
+   *
+   * @test
+   */
+  public function get_keyWhereAreTwoNodesAndSecondPlaceIsPassed_shouldReturnSecondHook()
+  {
+    $hook1 = $this->getHook('t_hook1');
+    $hook2 = $this->getHook('t_hook1');
+    $harvest = $this->getNodeElement(array($hook1, $hook2));
+    $this->harvester->registerHooks($this->getPageWithResult($harvest), '.t_someSelector');
+    $this->assertSame(array('hook1'), array_keys($this->harvester->getRegister()));
+    $this->assertInstanceOf(get_class($hook2), $this->harvester->get('hook1', 1));
   }
 
   /**
