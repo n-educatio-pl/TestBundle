@@ -54,6 +54,7 @@
     <delete dir="${basedir}/build/logs"/>
     <delete dir="${basedir}/build/pdepend"/>
     <delete dir="${basedir}/build/behat"/>
+    <delete dir="${basedir}/tmp"/>
 
     <mkdir dir="${basedir}/build/api"/>
     <mkdir dir="${basedir}/build/code-browser"/>
@@ -61,6 +62,7 @@
     <mkdir dir="${basedir}/build/logs"/>
     <mkdir dir="${basedir}/build/pdepend"/>
     <mkdir dir="${basedir}/build/behat"/>
+    <mkdir dir="${basedir}/tmp"/>
   </target>
 
   <!-- TESTS -->
