@@ -5,7 +5,7 @@ namespace Neducatio\TestBundle\Utility\Awaiter;
 /**
  * Description of Awaiter
  */
-class Awaiter extends AwaiterBase
+class PageAwaiter extends AwaiterBase
 {
   protected $page = null;
 

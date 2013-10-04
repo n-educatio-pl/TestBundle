@@ -2,15 +2,15 @@
 
 namespace Neducatio\TestBundle\Tests\Utility\Awaiter;
 
-use Neducatio\TestBundle\Tests\Utility\Awaiter\TestableAwaiter;
+use Neducatio\TestBundle\Tests\Utility\Awaiter\TestablePageAwaiter;
 use \Mockery as m;
 
 /**
  * Do sth.
  *
- * @covers Neducatio\TestBundle\Utility\Awater\Awaiter
+ * @covers Neducatio\TestBundle\Utility\Awaiter\PageAwaiter
  */
-class AwaiterTest extends \PHPUnit_Framework_TestCase
+class PageAwaiterTest extends \PHPUnit_Framework_TestCase
 {
   /**
    * Do sth.
@@ -27,7 +27,7 @@ class AwaiterTest extends \PHPUnit_Framework_TestCase
    */
   public function __construct_shouldCreateInstanceOf()
   {
-    $this->assertInstanceOf('Neducatio\TestBundle\Utility\Awaiter\Awaiter', $this->getAwaiter());
+    $this->assertInstanceOf('Neducatio\TestBundle\Utility\Awaiter\PageAwaiter', $this->getAwaiter());
   }
 
   /**
@@ -174,11 +174,11 @@ class AwaiterTest extends \PHPUnit_Framework_TestCase
    *
    * @param DocumentElement $page $page
    * 
-   * @return Awaiter
+   * @return PageAwaiter
    */
   private function getAwaiter($page = null)
   {
-    $awaiter = new TestableAwaiter();;
+    $awaiter = new TestablePageAwaiter();;
     if ($page !== null) {
       $awaiter->setPage($page);
     }

@@ -7,7 +7,7 @@ use Neducatio\TestBundle\Utility\Awaiter\DocumentElementNotSetException;
 /**
  * Do sth.
  *
- * @covers Neducatio\TestBundle\Utility\Awaiter\DocumentElementNotSet
+ * @covers Neducatio\TestBundle\Utility\Awaiter\DocumentElementNotSetException
  */
 class DocumentElementNotSetExceptionTest extends \PHPUnit_Framework_TestCase
 {

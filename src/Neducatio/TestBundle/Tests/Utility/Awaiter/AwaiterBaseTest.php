@@ -8,7 +8,7 @@ use \Mockery as m;
 /**
  * Do sth.
  *
- * @covers Neducatio\TestBundle\Utility\Awater\AwaiterBase
+ * @covers Neducatio\TestBundle\Utility\Awaiter\AwaiterBase
  */
 class AwaiterBaseTest extends \PHPUnit_Framework_TestCase
 {
