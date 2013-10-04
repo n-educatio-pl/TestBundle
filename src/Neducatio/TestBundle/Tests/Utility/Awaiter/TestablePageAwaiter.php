@@ -13,5 +13,4 @@ class TestablePageAwaiter extends PageAwaiter
     public $minTime = 5000;
     public $maxWaitingTime = 10000;
     public $waitDistance = 1000;
-    public $page;
 }

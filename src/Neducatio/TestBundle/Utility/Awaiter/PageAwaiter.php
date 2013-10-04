@@ -20,6 +20,16 @@ class PageAwaiter extends AwaiterBase
   }
 
   /**
+   * Get page
+   *
+   * @return \Behat\Mink\Element\DocumentElement
+   */
+  public function getPage()
+  {
+    return $this->page;
+  }
+
+  /**
    * Wait until element will be visible on page
    *
    * @param string $selector Element selector

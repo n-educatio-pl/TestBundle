@@ -38,4 +38,14 @@ abstract class BasePageObject
   {
     return $this->builder->getHarvester()->get($key);
   }
+
+  /**
+   * Get Awaiter from Builder
+   *
+   * @return PageAwaiter
+   */
+  public function getAwaiter()
+  {
+    return $this->builder->getAwaiter();
+  }
 }

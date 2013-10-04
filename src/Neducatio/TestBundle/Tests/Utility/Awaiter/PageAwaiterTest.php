@@ -37,9 +37,9 @@ class PageAwaiterTest extends \PHPUnit_Framework_TestCase
   {
     $page = m::mock("\Behat\Mink\Element\DocumentElement");
     $awaiter = $this->getAwaiter();
-    $this->assertNull($awaiter->page);
+    $this->assertNull($awaiter->getPage());
     $awaiter->setPage($page);
-    $this->assertSame($page, $awaiter->page);
+    $this->assertSame($page, $awaiter->getPage());
   }
 
   /**

@@ -11,4 +11,5 @@ class TestableBasePage extends BasePageObject
 {
   const NAME = __CLASS__;
   protected $proofSelector = 'selector';
+  public $builder;
 }

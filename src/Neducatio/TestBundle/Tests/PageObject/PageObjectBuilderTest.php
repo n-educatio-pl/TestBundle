@@ -35,11 +35,13 @@ class PageObjectBuilderTest extends \PHPUnit_Framework_TestCase
    *
    * @test
    */
-  public function build_validPageNameAndDocumentElementArePassed_shouldReturnInstanceOfGivenPage()
+  public function build_validPageNameAndDocumentElementArePassed_shouldReturnInstanceOfGivenPageAndSetDocumentElementInAwaiter()
   {
     $builder = $this->getBuilder();
-    $basePage = $builder->build(TestableBasePage::NAME, $this->getPage());
+    $documentElement = $this->getPage();
+    $basePage = $builder->build(TestableBasePage::NAME, $documentElement);
     $this->assertInstanceOf('Neducatio\TestBundle\Tests\PageObject\TestableBasePage', $basePage);
+    $this->assertSame($documentElement, $builder->getAwaiter()->getPage());
   }
 
   /**
@@ -62,6 +64,17 @@ class PageObjectBuilderTest extends \PHPUnit_Framework_TestCase
   {
     $builder = $this->getBuilder();
     $this->assertInstanceOf('Neducatio\TestBundle\Utility\HookHarvester', $builder->getHarvester());
+  }
+
+  /**
+   * Do sth.
+   *
+   * @test
+   */
+  public function getAwaiter_shouldReturnInstanceOfPageAvaiter()
+  {
+    $builder = $this->getBuilder();
+    $this->assertInstanceOf('Neducatio\TestBundle\Utility\Awaiter\PageAwaiter', $builder->getAwaiter());
   }
 
   /**
