@@ -44,6 +44,16 @@ class BaseFeatureContextTest extends \PHPUnit_Framework_TestCase
    *
    * @test
    */
+  public function getRegistry_shouldReturnRegistryObject()
+  {
+    $this->assertInstanceOf('Neducatio\TestBundle\Utility\Registry', $this->feature->getRegistry());
+  }
+
+  /**
+   * Do sth.
+   *
+   * @test
+   */
   public function setKernel_calledWithMock_shouldSetMockAsKernel()
   {
     $this->feature->setKernel($this->getKernelMock());

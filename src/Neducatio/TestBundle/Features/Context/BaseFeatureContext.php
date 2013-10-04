@@ -6,6 +6,7 @@ use Behat\Symfony2Extension\Context\KernelAwareInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Neducatio\TestBundle\DataFixtures\FixtureLoader;
 use Neducatio\TestBundle\DataFixtures\FixtureDependencyInvoker;
+use Neducatio\TestBundle\Utility\Registry;
 
 // @codeCoverageIgnoreStart
 require_once 'PHPUnit/Autoload.php';
@@ -21,6 +22,7 @@ abstract class BaseFeatureContext extends MinkContext implements KernelAwareInte
   protected $fixtureLoader;
   protected $parameters;
   protected $page;
+  protected $registry;
   protected $usingJs = false;
 
   /**
@@ -30,19 +32,30 @@ abstract class BaseFeatureContext extends MinkContext implements KernelAwareInte
    */
   public function __construct(array $parameters)
   {
+    $this->registry = new Registry();
     $this->parameters = $parameters;
   }
 
   /**
    * Sets HttpKernel instance.
-   * 
-   * This method will be automatically called by Symfony2Extension ContextInitializer. 
+   *
+   * This method will be automatically called by Symfony2Extension ContextInitializer.
    *
    * @param KernelInterface $kernel Kernel
    */
   public function setKernel(KernelInterface $kernel)
   {
       $this->kernel = $kernel;
+  }
+
+  /**
+   * Get registry
+   *
+   * @return Registry
+   */
+  public function getRegistry()
+  {
+    return $this->registry;
   }
 
   /**
