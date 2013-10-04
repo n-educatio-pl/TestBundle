@@ -43,6 +43,16 @@ class BaseFeatureContextTest extends \PHPUnit_Framework_TestCase
   /**
    * Do sth.
    *
+   * @test
+   */
+  public function getRegistry_shouldReturnRegistryObject()
+  {
+    $this->assertInstanceOf('Neducatio\TestBundle\Utility\Registry', $this->feature->getRegistry());
+  }
+
+  /**
+   * Do sth.
+   *
    * @group integration
    * @test
    */
@@ -101,14 +111,5 @@ class BaseFeatureContextTest extends \PHPUnit_Framework_TestCase
   {
     $this->feature->enableJs();
     $this->assertTrue($this->feature->usingJs());
-  }
-
-  private function getKernelMock()
-  {
-    $container = m::mock('stdClass');
-    $kernel = m::mock('Symfony\Component\HttpKernel\KernelInterface');
-    $kernel->shouldReceive('getContainer')->andReturn($container);
-
-    return $kernel;
   }
 }

@@ -5,6 +5,7 @@ use Behat\BehatBundle\Context\MinkContext;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Neducatio\TestBundle\DataFixtures\FixtureLoader;
 use Neducatio\TestBundle\DataFixtures\FixtureDependencyInvoker;
+use Neducatio\TestBundle\Utility\Registry;
 
 // @codeCoverageIgnoreStart
 require_once 'PHPUnit/Autoload.php';
@@ -19,6 +20,7 @@ abstract class BaseFeatureContext extends MinkContext
   protected $kernel;
   protected $fixtureLoader;
   protected $page;
+  protected $registry;
   protected $usingJs = false;
 
   /**
@@ -30,6 +32,17 @@ abstract class BaseFeatureContext extends MinkContext
   {
     parent::__construct($kernel);
     $this->kernel = $kernel;
+    $this->registry = new Registry();
+  }
+
+  /**
+   * Get registry
+   *
+   * @return Registry
+   */
+  public function getRegistry()
+  {
+    return $this->registry;
   }
 
   /**
