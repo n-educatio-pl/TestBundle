@@ -1,11 +1,11 @@
 <?php
 
-namespace Neducatio\TestBundle\Utility;
+namespace Neducatio\TestBundle\Utility\Awaiter;
 
 /**
- * Description of Awaiter
+ * Description of AwaiterBase
  */
-class Awaiter
+abstract class AwaiterBase
 {
     protected $minTime = 500000;
     protected $maxWaitingTime = 4000000;
@@ -30,5 +30,25 @@ class Awaiter
           throw new ConditionNotFulfilledException();
         }
         usleep($this->minTime);
+    }
+
+    /**
+     * Wait until true
+     *
+     * @param Callable $condition condition callable
+     */
+    public function waitUntilTrue($condition)
+    {
+      $this->waitUntil($condition, true);
+    }
+
+    /**
+     * Wait until false
+     *
+     * @param Callable $condition condition callable
+     */
+    public function waitUntilFalse($condition)
+    {
+      $this->waitUntil($condition, false);
     }
 }

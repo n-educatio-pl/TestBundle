@@ -1,6 +1,6 @@
 <?php
 
-namespace Neducatio\TestBundle\Utility;
+namespace Neducatio\TestBundle\Utility\Awaiter;
 
 /**
  * Description of ConditionNotFulfilledException

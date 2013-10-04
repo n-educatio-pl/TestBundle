@@ -1,16 +1,16 @@
 <?php
 
-namespace Neducatio\TestBundle\Tests\Utility;
+namespace Neducatio\TestBundle\Tests\Utility\Awaiter;
 
-use Neducatio\TestBundle\Tests\Utility\TestableAwaiter;
+use Neducatio\TestBundle\Tests\Utility\Awaiter\TestableAwaiterBase;
 use \Mockery as m;
 
 /**
  * Do sth.
  *
- * @covers Neducatio\TestBundle\Utility\Awaiter
+ * @covers Neducatio\TestBundle\Utility\Awater\Awaiter
  */
-class AwaiterTest extends \PHPUnit_Framework_TestCase
+class AwaiterBaseTest extends \PHPUnit_Framework_TestCase
 {
   /**
    * Do sth.
@@ -27,7 +27,7 @@ class AwaiterTest extends \PHPUnit_Framework_TestCase
    */
   public function __construct_shouldCreateInstanceOf()
   {
-    $this->assertInstanceOf('Neducatio\TestBundle\Utility\Awaiter', $this->getAwaiter());
+    $this->assertInstanceOf('Neducatio\TestBundle\Utility\Awaiter\AwaiterBase', $this->getAwaiter());
   }
 
   /**
@@ -67,7 +67,7 @@ class AwaiterTest extends \PHPUnit_Framework_TestCase
    * Tests waitUntil
    *
    * @test
-   * @expectedException \Neducatio\TestBundle\Utility\ConditionNotFulfilledException
+   * @expectedException \Neducatio\TestBundle\Utility\Awaiter\ConditionNotFulfilledException
    */
   public function waitUntil_conditionIsFulfilledAfterMaxWaitingTime_waitMoreThanOrEqualMaxWaitingTimeAndThrowContitionNotFulfilledException()
   {
@@ -77,6 +77,38 @@ class AwaiterTest extends \PHPUnit_Framework_TestCase
     $awaiter->waitUntil($condition, true);
     $this->stopTimer();
     $this->assertWaitMoreThanOrEqualMicroseconds($awaiter->maxWaitingTime);
+  }
+
+  /**
+   * Tests waitUntilTrue
+   *
+   * @test
+   */
+  public function waitUntilTrue_conditionIsFulfilledTwoTimesEarlierThanMaxWaitingTime_waitMoreThanHalfOfMaxWaitingTimePlusMinimumTimeAndLessThanMaxWaitingTimePlusMinimumTime()
+  {
+    $awaiter = $this->getAwaiter();
+    $this->startTimer();
+    $condition = $this->getCondition($awaiter, 0.5, false, true);
+    $awaiter->waitUntilTrue($condition);
+    $this->stopTimer();
+    $this->assertWaitMoreThanOrEqualMicroseconds($awaiter->maxWaitingTime * 0.5 + $awaiter->minTime);
+    $this->assertWaitLessThanOrEqualMicroseconds($awaiter->maxWaitingTime + $awaiter->minTime);
+  }
+
+  /**
+   * Tests waitUntilFalse
+   *
+   * @test
+   */
+  public function waitUntilFalse_conditionIsFulfilledTwoTimesEarlierThanMaxWaitingTime_waitMoreThanHalfOfMaxWaitingTimePlusMinimumTimeAndLessThanMaxWaitingTimePlusMinimumTime()
+  {
+    $awaiter = $this->getAwaiter();
+    $this->startTimer();
+    $condition = $this->getCondition($awaiter, 0.5, true, false);
+    $awaiter->waitUntilFalse($condition);
+    $this->stopTimer();
+    $this->assertWaitMoreThanOrEqualMicroseconds($awaiter->maxWaitingTime * 0.5 + $awaiter->minTime);
+    $this->assertWaitLessThanOrEqualMicroseconds($awaiter->maxWaitingTime + $awaiter->minTime);
   }
 
   private function getCondition($awaiter, $partOfTime, $resultBefore, $resultAfter)
@@ -123,6 +155,6 @@ class AwaiterTest extends \PHPUnit_Framework_TestCase
    */
   private function getAwaiter()
   {
-    return new TestableAwaiter();
+    return new TestableAwaiterBase();
   }
 }
