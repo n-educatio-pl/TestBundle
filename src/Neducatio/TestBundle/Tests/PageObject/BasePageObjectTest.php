@@ -31,6 +31,17 @@ class BasePageObjectTest extends PageTestCase
   }
 
   /**
+   * Do sth.
+   *
+   * @test
+   */
+  public function getAwaiter_shouldReturnAwaiterFromBuilder()
+  {
+    $this->assertInstanceOf('Neducatio\TestBundle\Utility\Awaiter\PageAwaiter', $this->pageObject->getAwaiter());
+    $this->assertSame($this->pageObject->builder->getAwaiter(), $this->pageObject->getAwaiter());
+  }
+
+  /**
    * Gets PageObject
    *
    * @return PageObject

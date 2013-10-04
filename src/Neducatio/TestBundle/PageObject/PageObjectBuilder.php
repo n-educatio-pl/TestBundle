@@ -5,6 +5,7 @@ namespace Neducatio\TestBundle\PageObject;
 use Behat\Mink\Element\DocumentElement;
 use Neducatio\TestBundle\Utility\DocumentElementValidator;
 use Neducatio\TestBundle\Utility\HookHarvester;
+use Neducatio\TestBundle\Utility\Awaiter\PageAwaiter;
 
 /**
  * Page object builder
@@ -13,6 +14,7 @@ class PageObjectBuilder
 {
   private $validator;
   private $harvester;
+  private $awaiter;
 
   /**
    * Creates dependencies
@@ -21,6 +23,7 @@ class PageObjectBuilder
   {
     $this->validator = new DocumentElementValidator();
     $this->harvester = new HookHarvester();
+    $this->awaiter = new PageAwaiter();
   }
 
   /**
@@ -33,6 +36,8 @@ class PageObjectBuilder
    */
   public function build($page, DocumentElement $element)
   {
+    $this->awaiter->setPage($element);
+
     return new $page($element, $this);
   }
 
@@ -54,5 +59,15 @@ class PageObjectBuilder
   public function getHarvester()
   {
     return $this->harvester;
+  }
+
+  /**
+   * Gets awaiter
+   *
+   * @return PageAwaiter
+   */
+  public function getAwaiter()
+  {
+    return $this->awaiter;
   }
 }
