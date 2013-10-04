@@ -28,17 +28,18 @@ class HookHarvester
   /**
    * Gets hook by key.
    *
-   * @param string $key Key under which the node exists in register.
+   * @param string  $key   Key under which the node exists in register.
+   * @param integer $place Index of given node (if exists many nodes with the same key)
    *
    * @return NodeElement Node of given key
    */
-  public function get($key)
+  public function get($key, $place = 0)
   {
     if (!array_key_exists($key, $this->register)) {
       throw new \InvalidArgumentException('Hook ' . $key . ' not found.');
     }
 
-    return array_shift($this->register[$key]);
+    return $this->register[$key][$place];
   }
 
   /**

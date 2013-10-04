@@ -1,4 +1,18 @@
 {
+    "repositories": [
+        {
+            "type": "package",
+            "package": {
+                "name": "zerkalica/phpcs",
+                "version": "dev-master",
+                "source": {
+                    "type": "git",
+                    "url": "https://github.com/sfraszczak-neducatio/PHP_CodeSniffer.git",
+                    "reference": "master"
+                }
+            }
+        }
+    ],
     "name": "n-educatio/testbundle",
     "authors": [
         {

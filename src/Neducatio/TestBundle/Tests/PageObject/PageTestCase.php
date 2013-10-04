@@ -45,9 +45,11 @@ abstract class PageTestCase extends \PHPUnit_Framework_TestCase
     $validator->shouldReceive('validate')->byDefault();
     $this->harvester = m::mock('Neducatio\TestBundle\Utility\HookHarvester');
     $this->harvester->shouldReceive('registerHooks')->byDefault();
+    $awaiter = m::mock("Neducatio\TestBundle\Utility\Awaiter\PageAwaiter");
     $builder = m::mock('Neducatio\TestBundle\PageObject\PageObjectBuilder');
     $builder->shouldReceive('getValidator')->andReturn($validator);
     $builder->shouldReceive('getHarvester')->andReturn($this->harvester);
+    $builder->shouldReceive('getAwaiter')->andReturn($awaiter);
 
     return $builder;
   }

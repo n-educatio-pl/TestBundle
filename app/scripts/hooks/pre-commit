@@ -126,7 +126,7 @@ foreach ($output as $file) {
 
 
     $outputCs = array();
-    exec("php vendor/zerkalica/phpcs/scripts/phpcs --ignore='Resources/public' --standard=app/phpcsRuleset.xml $fileEsc 2>&1" , $outputCs, $returnCs);
+    exec("php vendor/zerkalica/phpcs/scripts/phpcs --ignore='Resources/public' --standard=Symfony2 $fileEsc 2>&1" , $outputCs, $returnCs);
     if ($returnCs != 0) {
         echo $colors->getColoredString("\nCoding standards: FAILED", "gray", "red") . "\n";
         $exitStatus = 1;

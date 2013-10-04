@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "ce3ec09dd8ebe1aa3e16fc0610fa17c2",
+    "hash": "be01c7d8df3142e12fef9ef018c199ef",
     "packages": [
         {
             "name": "behat/behat",
@@ -2261,25 +2261,11 @@
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/zerkalica/PHP_CodeSniffer.git",
-                "reference": "e2d4488665c722b81e04141c5615ced3277509d9"
+                "url": "https://github.com/sfraszczak-neducatio/PHP_CodeSniffer.git",
+                "reference": "master"
             },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/zerkalica/PHP_CodeSniffer/zipball/e2d4488665c722b81e04141c5615ced3277509d9",
-                "reference": "e2d4488665c722b81e04141c5615ced3277509d9",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.0"
-            },
-            "bin": [
-                "scripts/phpcs"
-            ],
             "type": "library",
-            "notification-url": "https://packagist.org/downloads/",
-            "description": "Unofficial version of PHP_CodeSniffer to be handled with Composer",
-            "time": "2012-11-06 21:19:44"
+            "time": "2013-10-02 08:59:15"
         }
     ],
     "aliases": [

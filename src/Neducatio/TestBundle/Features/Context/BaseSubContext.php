@@ -36,15 +36,28 @@ abstract class BaseSubContext extends BehatContext
       $this->builder = $builder;
   }
 
+  /**
+   * Load fixtures
+   *
+   * @param array $fixtures Array with fixture namespaces
+   */
   public function loadFixtures($fixtures)
   {
     $this->checkIfHasParent();
-    return $this->getMainContext()->loadFixtures($fixtures);
+    $this->getMainContext()->loadFixtures($fixtures);
   }
 
+  /**
+   * Get reference
+   *
+   * @param string $reference Reference name
+   *
+   * @return object
+   */
   public function getReference($reference)
   {
     $this->checkIfHasParent();
+
     return $this->getMainContext()->getReference($reference);
   }
 

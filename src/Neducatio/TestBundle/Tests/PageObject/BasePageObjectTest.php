@@ -26,8 +26,19 @@ class BasePageObjectTest extends PageTestCase
    */
   public function get_someKeyPassed_shouldReturnHook()
   {
-    $this->harvester->shouldReceive('get')->with('someKey')->andReturn('hook');
+    $this->harvester->shouldReceive('get')->with('someKey', 0)->andReturn('hook');
     $this->assertSame('hook', $this->pageObject->get('someKey'));
+  }
+
+  /**
+   * Do sth.
+   *
+   * @test
+   */
+  public function getAwaiter_shouldReturnAwaiterFromBuilder()
+  {
+    $this->assertInstanceOf('Neducatio\TestBundle\Utility\Awaiter\PageAwaiter', $this->pageObject->getAwaiter());
+    $this->assertSame($this->pageObject->builder->getAwaiter(), $this->pageObject->getAwaiter());
   }
 
   /**
