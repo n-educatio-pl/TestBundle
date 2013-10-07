@@ -14,6 +14,8 @@ class BaseSubContextTest extends SubContextTestCase
 {
   private $translator;
   private $feature;
+  private $registry;
+  private $builder;
 
   /**
    * Sets up
@@ -21,9 +23,10 @@ class BaseSubContextTest extends SubContextTestCase
   public function setUp()
   {
     $this->translator = m::mock('Symfony\Bundle\FrameworkBundle\Translation\Translator');
-    $builder = m::mock('Neducatio\TestBundle\PageObject\PageObjectBuilder');
-    $builder->shouldReceive('build')->andReturn('page');
-    $this->feature = new TestableBaseSubContext(array('builder' => $builder));
+    $this->builder = m::mock('Neducatio\TestBundle\PageObject\PageObjectBuilder');
+    $this->registry = m::mock('Neducatio\TestBundle\Utility\Reqistry');
+    $this->builder->shouldReceive('getRegistry')->andReturn($this->registry);
+    $this->feature = new TestableBaseSubContext(array('builder' => $this->builder));
   }
 
   /**
@@ -43,9 +46,26 @@ class BaseSubContextTest extends SubContextTestCase
    */
   public function getPage_pageIsSet_shouldReturnGivenPage()
   {
-    $this->feature->setParentContext($this->getParentContextMock());
+    $pageObject = new \stdClass();
+    $browserPage = m::mock('Behat\Mink\Element\DocumentElement');
+    $this->builder->shouldReceive('build')->with('page', $browserPage)->andReturn($pageObject)->once();
+    $this->registry->shouldReceive('set')->with('page', $pageObject)->once();
+    $this->registry->shouldReceive('get')->with('page')->andReturn($pageObject)->once();
+    $this->feature->setParentContext($this->getParentContextMock($browserPage));
     $this->feature->setPage('page');
-    $this->assertSame('page', $this->feature->getPage());
+    $this->assertSame($pageObject, $this->feature->getPage());
+  }
+
+  /**
+   * set Page test
+   *
+   * @test
+   * @expectedException RuntimeException
+   * @expectedExceptionMessage Sub context has no parent
+   */
+  public function setPage_noMainContextSetted_shouldThrowException()
+  {
+    $this->feature->setPage('page');
   }
 
   /**
@@ -120,6 +140,32 @@ class BaseSubContextTest extends SubContextTestCase
     $mainContext->shouldReceive('getReference')->with('ref')->once();
     $this->feature->setParentContext($parent);
     $this->feature->getReference('ref');
+  }
+
+  /**
+   * Do sth.
+   *
+   * @test
+   */
+  public function getRegistry_shouldCallGetRegistryOnMainContext()
+  {
+    $parent = $this->getParentContextMock();
+    $mainContext = $parent->getMainContext();
+    $mainContext->shouldReceive('getRegistry')->once();
+    $this->feature->setParentContext($parent);
+    $this->feature->getRegistry();
+  }
+
+  /**
+   * Do sth.
+   *
+   * @test
+   * @expectedException RuntimeException
+   * @expectedExceptionMessage Sub context has no parent
+   */
+  public function getRegistry_maintContextNotSet_shouldThrowException()
+  {
+    $this->feature->getRegistry();
   }
 
   private function getKernelMock()

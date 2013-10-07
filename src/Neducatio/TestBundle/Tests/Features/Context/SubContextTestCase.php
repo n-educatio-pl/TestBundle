@@ -27,11 +27,10 @@ abstract class SubContextTestCase extends \PHPUnit_Framework_TestCase
     return $builder;
   }
 
-  protected function getParentContextMock()
+  protected function getParentContextMock($documentPage = 'document')
   {
-    $page = m::mock('Behat\Mink\Element\DocumentElement');
     $session = m::mock('stdClass');
-    $session->shouldReceive('getPage')->andReturn($page);
+    $session->shouldReceive('getPage')->andReturn($documentPage);
     $mainContext = m::mock('Behat\Behat\Context\ExtendedContextInterface');
     $mainContext->shouldReceive('getSession')->andReturn($session);
     $mainContext->shouldReceive('loadFixtures')->byDefault();
