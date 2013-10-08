@@ -32,9 +32,9 @@ abstract class SubContextTestCase extends \PHPUnit_Framework_TestCase
     $session = m::mock('stdClass');
     $session->shouldReceive('getPage')->andReturn($documentPage);
     $mainContext = m::mock('Behat\Behat\Context\ExtendedContextInterface');
-    $mainContext->shouldReceive('getSession')->andReturn($session);
+    $mainContext->shouldReceive('getSession')->andReturn($session)->byDefault();
     $mainContext->shouldReceive('loadFixtures')->byDefault();
-    $mainContext->shouldReceive('visit');
+    $mainContext->shouldReceive('visit')->byDefault();
     $context = m::mock('Behat\Behat\Context\ExtendedContextInterface');
     $context->shouldReceive('getMainContext')->andReturn($mainContext);
 
