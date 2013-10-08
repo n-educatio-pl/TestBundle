@@ -25,7 +25,6 @@ class BaseSubContextTest extends SubContextTestCase
     $this->translator = m::mock('Symfony\Bundle\FrameworkBundle\Translation\Translator');
     $this->builder = m::mock('Neducatio\TestBundle\PageObject\PageObjectBuilder');
     $this->registry = m::mock('Neducatio\TestBundle\Utility\Reqistry');
-    $this->builder->shouldReceive('getRegistry')->andReturn($this->registry);
     $this->feature = new TestableBaseSubContext(array('builder' => $this->builder));
   }
 
@@ -47,12 +46,8 @@ class BaseSubContextTest extends SubContextTestCase
   public function getPage_pageIsSet_shouldReturnGivenPage()
   {
     $pageObject = new \stdClass();
-    $browserPage = m::mock('Behat\Mink\Element\DocumentElement');
-    $this->builder->shouldReceive('build')->with('page', $browserPage)->andReturn($pageObject)->once();
-    $this->registry->shouldReceive('set')->with('page', $pageObject)->once();
-    $this->registry->shouldReceive('get')->with('page')->andReturn($pageObject)->once();
-    $this->feature->setParentContext($this->getParentContextMock($browserPage));
-    $this->feature->setPage('page');
+    $this->feature->setParentContext($this->getParentContextMock());
+    $this->feature->getMainContext()->getRegistry()->shouldReceive('get')->andReturn($pageObject);
     $this->assertSame($pageObject, $this->feature->getPage());
   }
 

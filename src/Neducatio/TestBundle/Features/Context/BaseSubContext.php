@@ -82,7 +82,7 @@ abstract class BaseSubContext extends BehatContext implements KernelAwareInterfa
    */
   public function getPage()
   {
-    return $this->builder->getRegistry()->get(self::PAGE_KEY);
+    return $this->getRegistry()->get(self::PAGE_KEY);
   }
 
   /**
@@ -92,7 +92,7 @@ abstract class BaseSubContext extends BehatContext implements KernelAwareInterfa
    */
   public function setPage($pageObjectName)
   {
-    $this->builder->getRegistry()->set(self::PAGE_KEY, $this->builder->build($pageObjectName, $this->getBrowserPage()));
+    $this->getRegistry()->set(self::PAGE_KEY, $this->builder->build($pageObjectName, $this->getBrowserPage()));
   }
 
   /**
