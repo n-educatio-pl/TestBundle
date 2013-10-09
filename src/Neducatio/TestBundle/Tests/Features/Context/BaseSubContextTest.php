@@ -55,11 +55,12 @@ class BaseSubContextTest extends SubContextTestCase
    * set Page test
    *
    * @test
-   * @expectedException RuntimeException
-   * @expectedExceptionMessage Sub context has no parent
    */
   public function setPage_noMainContextSetted_shouldThrowException()
   {
+    $this->builder->shouldReceive('build');
+    $parent = $this->getParentContextMock();
+    $this->feature->setParentContext($parent);
     $this->feature->setPage('page');
   }
 
