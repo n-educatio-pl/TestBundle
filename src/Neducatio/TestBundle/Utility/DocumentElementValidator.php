@@ -30,7 +30,7 @@ class DocumentElementValidator
     $this->proofSelectorVisibility = $proofSelectorVisibility;
     $before = time();
     while (!$this->isCorrectPageReady()) {
-      if ((time() - $before) < 3) {
+      if ((time() - $before) < 5) {
         usleep(100000); // 0.1 second
         continue;
       }
