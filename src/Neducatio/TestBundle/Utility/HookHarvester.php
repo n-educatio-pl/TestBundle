@@ -2,7 +2,8 @@
 
 namespace Neducatio\TestBundle\Utility;
 
-use \Behat\Mink\Element\DocumentElement;
+use \Behat\Mink\Element\TraversableElement;
+use \Neducatio\TestBundle\PageObject\PageObjectBuilder;
 
 /**
  * Description of HookHarvester
@@ -10,18 +11,27 @@ use \Behat\Mink\Element\DocumentElement;
 class HookHarvester
 {
   private $register = array();
+  private $builder;
 
+  /**
+   * Constructor
+   *
+   * @param \Neducatio\TestBundle\PageObject\PageObjectBuilder $builder Builder
+   */
+  public function __construct(PageObjectBuilder $builder)
+  {
+    $this->builder = $builder;
+  }
   /**
    * Registers Hooks
    *
-   * @param DocumentElement $page          Page
-   * @param string          $proofSelector Proof selector
+   * @param BasePageObject $pageObject PageObject witch harvest
    */
-  public function registerHooks(DocumentElement $page, $proofSelector)
+  public function registerHooks(\Neducatio\TestBundle\PageObject\BasePageObject $pageObject)
   {
-    $elements = $this->getNodeElements($page, $proofSelector);
+    $elements = $this->getNodeElements($pageObject->getPageElement(), $pageObject->getProofSelector());
     foreach ($elements as $element) {
-      $this->addElement($element);
+      $this->addElement($element, $pageObject);
     }
   }
 
@@ -45,14 +55,14 @@ class HookHarvester
   /**
    * Retrieve harvest
    *
-   * @param DocumentElement $page          Page
-   * @param string          $proofSelector Proof selector
+   * @param TraversableElement $page          Page
+   * @param string             $proofSelector Proof selector
    *
    * @return NodeElement
    *
    * @throws \InvalidArgumentException
    */
-  private function retrieveHarvest(DocumentElement $page, $proofSelector)
+  private function retrieveHarvest(TraversableElement $page, $proofSelector)
   {
     $harvest = $page->find('css', $proofSelector);
     if ($harvest === null) {
@@ -65,12 +75,12 @@ class HookHarvester
   /**
    * Gets node elements
    *
-   * @param DocumentElement $page          Page
-   * @param string          $proofSelector Proof selector
+   * @param TraversableElement $page          Page
+   * @param string             $proofSelector Proof selector
    *
    * @return array
    */
-  private function getNodeElements(DocumentElement $page, $proofSelector)
+  private function getNodeElements(TraversableElement $page, $proofSelector)
   {
     $harvest = $this->retrieveHarvest($page, $proofSelector);
 
@@ -80,12 +90,18 @@ class HookHarvester
   /**
    * Gets keys for element
    *
-   * @param NodeElement $element Element
+   * @param NodeElement    $element    Element
+   * @param BasePageObject $pageObject PageObject witch harvest
    */
-  private function addElement($element)
+  private function addElement($element, \Neducatio\TestBundle\PageObject\BasePageObject $pageObject)
   {
+    $subPageObjectsData = $pageObject->getSubPageObjectsData();
     foreach ($this->retrieveClassesForElement($element) as $key) {
-      $this->register[$key][] = $element;
+      $elementToRegister = $element;
+      if (array_key_exists($key, $subPageObjectsData)) {
+          $elementToRegister = $this->builder->build($subPageObjectsData[$key], $element, $pageObject);
+      }
+      $this->register[$key][] = $elementToRegister;
     }
   }
 

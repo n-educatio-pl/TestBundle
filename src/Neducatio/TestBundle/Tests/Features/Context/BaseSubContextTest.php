@@ -14,6 +14,8 @@ class BaseSubContextTest extends SubContextTestCase
 {
   private $translator;
   private $feature;
+  private $registry;
+  private $builder;
 
   /**
    * Sets up
@@ -24,6 +26,7 @@ class BaseSubContextTest extends SubContextTestCase
     $builder = m::mock('Neducatio\TestBundle\PageObject\PageObjectBuilder');
     $builder->shouldReceive('build')->andReturn('page');
     $kernel = $this->getKernelMock();
+    $this->registry = m::mock('Neducatio\TestBundle\Utility\Reqistry');
     $this->feature = new TestableBaseSubContext($kernel);
     $this->feature->setBuilder($builder);
   }
@@ -61,9 +64,23 @@ class BaseSubContextTest extends SubContextTestCase
    */
   public function getPage_pageIsSet_shouldReturnGivenPage()
   {
+    $pageObject = new \stdClass();
     $this->feature->setParentContext($this->getParentContextMock());
+    $this->feature->getMainContext()->getRegistry()->shouldReceive('get')->andReturn($pageObject);
+    $this->assertSame($pageObject, $this->feature->getPage());
+  }
+
+  /**
+   * set Page test
+   *
+   * @test
+   */
+  public function setPage_noMainContextSetted_shouldThrowException()
+  {
+    $this->builder->shouldReceive('build');
+    $parent = $this->getParentContextMock();
+    $this->feature->setParentContext($parent);
     $this->feature->setPage('page');
-    $this->assertSame('page', $this->feature->getPage());
   }
 
   /**
@@ -127,6 +144,32 @@ class BaseSubContextTest extends SubContextTestCase
     $mainContext->shouldReceive('getReference')->with('ref')->once();
     $this->feature->setParentContext($parent);
     $this->feature->getReference('ref');
+  }
+
+  /**
+   * Do sth.
+   *
+   * @test
+   */
+  public function getRegistry_shouldCallGetRegistryOnMainContext()
+  {
+    $parent = $this->getParentContextMock();
+    $mainContext = $parent->getMainContext();
+    $mainContext->shouldReceive('getRegistry')->once();
+    $this->feature->setParentContext($parent);
+    $this->feature->getRegistry();
+  }
+
+  /**
+   * Do sth.
+   *
+   * @test
+   * @expectedException RuntimeException
+   * @expectedExceptionMessage Sub context has no parent
+   */
+  public function getRegistry_maintContextNotSet_shouldThrowException()
+  {
+    $this->feature->getRegistry();
   }
 
   private function getKernelMock()

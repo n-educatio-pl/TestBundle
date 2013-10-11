@@ -12,13 +12,15 @@ use \Mockery as m;
  */
 class HookHarvesterTest extends \PHPUnit_Framework_TestCase
 {
+  private $builder;
   private $harvester;
   /**
    * Do sth.
    */
   public function setUp()
   {
-    $this->harvester = new HookHarvester();
+    $this->builder = m::mock('Neducatio\TestBundle\PageObject\PageObjectBuilder');
+    $this->harvester = new HookHarvester($this->builder);
   }
 
   /**
@@ -58,7 +60,7 @@ class HookHarvesterTest extends \PHPUnit_Framework_TestCase
    */
   public function registerHooks_pageWithoutGivenProofSelector_shouldThrowException()
   {
-    $this->harvester->registerHooks($this->getPageWithResult(), '.t_someSelector');
+    $this->harvester->registerHooks($this->getPageObject($this->getPageWithResult(), '.t_someSelector'));
   }
 
   /**
@@ -71,7 +73,7 @@ class HookHarvesterTest extends \PHPUnit_Framework_TestCase
     $hook1 = $this->getHook('t_hook1');
     $hook2 = $this->getHook('t_hook2');
     $harvest = $this->getNodeElement(array($hook1, $hook2));
-    $this->harvester->registerHooks($this->getPageWithResult($harvest), '.t_someSelector');
+    $this->harvester->registerHooks($this->getPageObject($this->getPageWithResult($harvest), '.t_someSelector'));
     $this->assertSame(array('hook1', 'hook2'), array_keys($this->harvester->getRegister()));
   }
 
@@ -85,7 +87,7 @@ class HookHarvesterTest extends \PHPUnit_Framework_TestCase
     $hook1 = $this->getHook('klasa klasa_klas t_hook1 klasa_klas');
     $hook2 = $this->getHook('klasa_ _klasa-klas t_hook2 klasa');
     $harvest = $this->getNodeElement(array($hook1, $hook2));
-    $this->harvester->registerHooks($this->getPageWithResult($harvest), '.t_someSelector');
+    $this->harvester->registerHooks($this->getPageObject($this->getPageWithResult($harvest), '.t_someSelector'));
     $this->assertSame(array('hook1', 'hook2'), array_keys($this->harvester->getRegister()));
   }
 
@@ -98,7 +100,7 @@ class HookHarvesterTest extends \PHPUnit_Framework_TestCase
   {
     $hook1 = $this->getHook('t_hook1 t_hook2');
     $harvest = $this->getNodeElement(array($hook1));
-    $this->harvester->registerHooks($this->getPageWithResult($harvest), '.t_someSelector');
+    $this->harvester->registerHooks($this->getPageObject($this->getPageWithResult($harvest), '.t_someSelector'));
     $this->assertSame(array('hook1', 'hook2'), array_keys($this->harvester->getRegister()));
   }
 
@@ -111,8 +113,25 @@ class HookHarvesterTest extends \PHPUnit_Framework_TestCase
   {
     $hook1 = $this->getHook('klasa-klas t_hook1 moja_klasa t_hook2 klasa');
     $harvest = $this->getNodeElement(array($hook1));
-    $this->harvester->registerHooks($this->getPageWithResult($harvest), '.t_someSelector');
+    $this->harvester->registerHooks($this->getPageObject($this->getPageWithResult($harvest), '.t_someSelector'));
     $this->assertSame(array('hook1', 'hook2'), array_keys($this->harvester->getRegister()));
+  }
+
+  /**
+   * Do sth.
+   *
+   * @test
+   * @group aaab
+   */
+  public function registerHooks_validHarvestWithTwoHooksInDifferentNodes_subPageDataPassedAndClassFound_shouldReturnTwoHooksInArrayOneAsSubPage()
+  {
+    $hook1 = $this->getHook('t_hook1');
+    $hook2 = $this->getHook('t_hook2');
+    $harvest = $this->getNodeElement(array($hook1, $hook2));
+    $mainPageObject = $this->getPageObject($this->getPageWithResult($harvest), '.t_someSelector', array('hook2' => 'someClass'));
+    $this->builder->shouldReceive('build')->with('someClass', $hook2, $mainPageObject)->andReturn('someSubPage');
+    $this->harvester->registerHooks($mainPageObject);
+    $this->assertSame(array('hook1' => array($hook1), 'hook2' => array('someSubPage')), $this->harvester->getRegister());
   }
 
   /**
@@ -136,8 +155,25 @@ class HookHarvesterTest extends \PHPUnit_Framework_TestCase
   {
     $hook = $this->getHook('t_existing_key');
     $harvest = $this->getNodeElement(array($hook));
-    $this->harvester->registerHooks($this->getPageWithResult($harvest), '.t_someSelector');
+    $this->harvester->registerHooks($this->getPageObject($this->getPageWithResult($harvest), '.t_someSelector'));
     $this->assertSame(get_class($hook), get_class($this->harvester->get('existing_key')));
+  }
+
+  /**
+   * Do sth.
+   *
+   * @test
+   * @group aaab
+   */
+  public function get_existingKeyWithSubPagePassed_shouldReturnSubpage()
+  {
+    $hook1 = $this->getHook('t_hook1');
+    $hook2 = $this->getHook('t_hook2');
+    $harvest = $this->getNodeElement(array($hook1, $hook2));
+    $mainPageObject = $this->getPageObject($this->getPageWithResult($harvest), '.t_someSelector', array('hook2' => 'someClass'));
+    $this->builder->shouldReceive('build')->with('someClass', $hook2, $mainPageObject)->andReturn('someSubPage');
+    $this->harvester->registerHooks($mainPageObject);
+    $this->assertSame('someSubPage', $this->harvester->get('hook2'));
   }
 
   /**
@@ -150,7 +186,7 @@ class HookHarvesterTest extends \PHPUnit_Framework_TestCase
     $hook1 = $this->getHook('t_hook1');
     $hook2 = $this->getHook('t_hook1');
     $harvest = $this->getNodeElement(array($hook1, $hook2));
-    $this->harvester->registerHooks($this->getPageWithResult($harvest), '.t_someSelector');
+    $this->harvester->registerHooks($this->getPageObject($this->getPageWithResult($harvest), '.t_someSelector'));
     $this->assertSame(array('hook1'), array_keys($this->harvester->getRegister()));
     $this->assertInstanceOf(get_class($hook1), $this->harvester->get('hook1'));
   }
@@ -165,9 +201,19 @@ class HookHarvesterTest extends \PHPUnit_Framework_TestCase
     $hook1 = $this->getHook('t_hook1');
     $hook2 = $this->getHook('t_hook1');
     $harvest = $this->getNodeElement(array($hook1, $hook2));
-    $this->harvester->registerHooks($this->getPageWithResult($harvest), '.t_someSelector');
+    $this->harvester->registerHooks($this->getPageObject($this->getPageWithResult($harvest), '.t_someSelector'));
     $this->assertSame(array('hook1'), array_keys($this->harvester->getRegister()));
     $this->assertInstanceOf(get_class($hook2), $this->harvester->get('hook1', 1));
+  }
+
+  private function getPageObject(\Behat\Mink\Element\TraversableElement $element, $selector, $subPageObjectsData = array())
+  {
+      $pageObject = m::mock('\Neducatio\TestBundle\PageObject\BasePageObject');
+      $pageObject->shouldReceive('getPageElement')->andReturn($element);
+      $pageObject->shouldReceive('getProofSelector')->andReturn($selector);
+      $pageObject->shouldReceive('getSubPageObjectsData')->andReturn($subPageObjectsData);
+
+      return $pageObject;
   }
 
   /**

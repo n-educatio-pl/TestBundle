@@ -3,6 +3,7 @@
 namespace Neducatio\TestBundle\PageObject;
 
 use \Behat\Mink\Element\DocumentElement;
+use \Behat\Mink\Element\TraversableElement;
 
 /**
  * Base page object
@@ -12,19 +13,55 @@ abstract class BasePageObject
   protected $builder;
   protected $page;
   protected $proofSelectorVisibility = false;
+  protected $proofSelector;
+  protected $parent;
+  protected $subPageObjectsData = array();
+  protected $subPageObjects;
 
   /**
    * Do sth.
    *
-   * @param DocumentElement   $page    Page used to instantiate PageObject
-   * @param PageObjectBuilder $builder Page object builder
+   * @param TraversableElement $page    Page used to instantiate PageObject
+   * @param PageObjectBuilder  $builder Page object builder
+   * @param BasePageObject     $parent  Subpage object parent
    */
-  public function __construct(DocumentElement $page, PageObjectBuilder $builder)
+  public function __construct(TraversableElement $page, PageObjectBuilder $builder, BasePageObject $parent = null)
   {
     $this->page = $page;
     $this->builder = $builder;
-    $this->builder->getValidator()->validate($page, $this->proofSelector, $this->proofSelectorVisibility);
-    $this->builder->getHarvester()->registerHooks($page, $this->proofSelector);
+    $this->parent = $parent;
+    $this->builder->getValidator($page)->validate($page, $this->proofSelector, $this->proofSelectorVisibility);
+    $this->builder->getHarvester()->registerHooks($this);
+  }
+
+  /**
+   * Get page element
+   *
+   * @return TraversableElement
+   */
+  public function getPageElement()
+  {
+      return $this->page;
+  }
+
+  /**
+   * Get proof selector
+   *
+   * @return string
+   */
+  public function getProofSelector()
+  {
+      return $this->proofSelector;
+  }
+
+  /**
+   * Get SubPageObjectsData
+   *
+   * @return array
+   */
+  public function getSubPageObjectsData()
+  {
+      return $this->subPageObjectsData;
   }
 
   /**
@@ -48,5 +85,25 @@ abstract class BasePageObject
   public function getAwaiter()
   {
     return $this->builder->getAwaiter();
+  }
+
+//  /**
+//   * get sub page objects
+//   *
+//   * @return array
+//   */
+//  public function getSubPages()
+//  {
+//    return $this->subPageObjects;
+//  }
+
+  /**
+   * Get parent
+   *
+   * @return BasePageObject
+   */
+  public function getParent()
+  {
+    return $this->parent;
   }
 }

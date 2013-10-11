@@ -2,17 +2,21 @@
 
 namespace Neducatio\TestBundle\PageObject;
 
+use Behat\Mink\Element\TraversableElement;
+use Behat\Mink\Element\NodeElement;
 use Behat\Mink\Element\DocumentElement;
 use Neducatio\TestBundle\Utility\DocumentElementValidator;
+use Neducatio\TestBundle\Utility\NodeElementValidator;
 use Neducatio\TestBundle\Utility\HookHarvester;
 use Neducatio\TestBundle\Utility\Awaiter\PageAwaiter;
 
 /**
- * Page object builder
+ * Page and subpage object builder
  */
 class PageObjectBuilder
 {
-  private $validator;
+  private $nodeValidator;
+  private $documentValidator;
   private $harvester;
   private $awaiter;
 
@@ -21,34 +25,43 @@ class PageObjectBuilder
    */
   public function __construct()
   {
-    $this->validator = new DocumentElementValidator();
-    $this->harvester = new HookHarvester();
+    $this->nodeValidator = new NodeElementValidator();
+    $this->documentValidator = new DocumentElementValidator();
+    $this->harvester = new HookHarvester($this);
     $this->awaiter = new PageAwaiter();
   }
 
   /**
    * Builds
    *
-   * @param string          $page    Page
-   * @param DocumentElement $element Document element
+   * @param string          $page             Page
+   * @param DocumentElement $element          Document element
+   * @param BasePageObject  $parentPageObject Page object which build new subpage (null if it is main pageobject)
    *
    * @return instance of page
    */
-  public function build($page, DocumentElement $element)
+  public function build($page, TraversableElement $element, BasePageObject $parentPageObject = null)
   {
     $this->awaiter->setPage($element);
 
-    return new $page($element, $this);
+    return new $page($element, $this, $parentPageObject);
   }
 
   /**
    * Gets validator
+   * 
+   * @param TraversableElement $page Validator for given page type will be returned
    *
-   * @return DocumentElementValidator
+   * @return TraversableElementValidator
    */
-  public function getValidator()
+  public function getValidator(TraversableElement $page)
   {
-    return $this->validator;
+    if ($page instanceof NodeElement) {
+
+        return $this->nodeValidator;
+    }
+
+    return $this->documentValidator;
   }
 
   /**

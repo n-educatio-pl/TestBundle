@@ -13,7 +13,7 @@ abstract class BaseSubContext extends BehatContext
   protected $kernel;
   protected $parameters;
   protected $builder;
-  protected static $page = null;
+  const PAGE_KEY = 'page';
 
   /**
    * Initializes context with symfony kernel
@@ -43,7 +43,6 @@ abstract class BaseSubContext extends BehatContext
    */
   public function loadFixtures($fixtures)
   {
-    $this->checkIfHasParent();
     $this->getMainContext()->loadFixtures($fixtures);
   }
 
@@ -56,8 +55,6 @@ abstract class BaseSubContext extends BehatContext
    */
   public function getReference($reference)
   {
-    $this->checkIfHasParent();
-
     return $this->getMainContext()->getReference($reference);
   }
 
@@ -78,13 +75,13 @@ abstract class BaseSubContext extends BehatContext
   }
 
   /**
-   * Get page object
+   * Get page object from registry
    *
-   * @return type
+   * @return PageObject
    */
   public function getPage()
   {
-    return self::$page;
+    return $this->getRegistry()->get(self::PAGE_KEY);
   }
 
   /**
@@ -94,16 +91,40 @@ abstract class BaseSubContext extends BehatContext
    */
   public function setPage($pageObjectName)
   {
-    self::$page = $this->builder->build($pageObjectName, $this->getBrowserPage());
+    $this->getRegistry()->set(self::PAGE_KEY, $this->builder->build($pageObjectName, $this->getBrowserPage()));
   }
 
-  private function checkIfHasParent()
+  /**
+   * @throws \RuntimeException
+   *
+   * @return \Neducatio\TestBundle\Utility\Registry
+   */
+  public function getRegistry()
   {
-    if ($this->getMainContext() instanceof $this) {
-      throw new \RuntimeException("Sub context has no parent");
-    }
+    return $this->getMainContext()->getRegistry();
   }
 
+  /**
+   * Get main context or throw exception if not set
+   *
+   * @throws \RuntimeException
+   *
+   * @return BaseFeatureContext
+   */
+  public function getMainContext()
+  {
+      if (parent::getMainContext() instanceof $this) {
+        throw new \RuntimeException("Sub context has no parent");
+      }
+
+      return parent::getMainContext();
+  }
+
+  /**
+   * @throws \RuntimeException
+   *
+   * @return DocumentElement
+   */
   private function getBrowserPage()
   {
     return $this->getMainContext()->getSession()->getPage();

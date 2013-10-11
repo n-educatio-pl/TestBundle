@@ -22,20 +22,26 @@ abstract class SubContextTestCase extends \PHPUnit_Framework_TestCase
   protected function getPageObjectBuilderMock()
   {
     $builder = m::mock('Neducatio\TestBundle\PageObject\PageObjectBuilder');
-    $builder->shouldReceive('build')->andReturn($this->pageObject);
+    $builder->shouldReceive('build')->andReturn($this->pageObject)->byDefault();
 
     return $builder;
   }
 
-  protected function getParentContextMock()
+  protected function getParentContextMock($documentPage = null)
   {
-    $page = m::mock('Behat\Mink\Element\DocumentElement');
+    if ($documentPage === null) {
+      $documentPage = m::mock('Behat\Mink\Element\DocumentElement');
+    }
     $session = m::mock('stdClass');
-    $session->shouldReceive('getPage')->andReturn($page);
+    $session->shouldReceive('getPage')->andReturn($documentPage)->byDefault();
+    $registry = m::mock('stdClass');
+    $registry->shouldReceive('get')->andReturn($this->pageObject)->byDefault();
+    $registry->shouldReceive('set')->byDefault();
     $mainContext = m::mock('Behat\Behat\Context\ExtendedContextInterface');
-    $mainContext->shouldReceive('getSession')->andReturn($session);
+    $mainContext->shouldReceive('getSession')->andReturn($session)->byDefault();
     $mainContext->shouldReceive('loadFixtures')->byDefault();
-    $mainContext->shouldReceive('visit');
+    $mainContext->shouldReceive('visit')->byDefault();
+    $mainContext->shouldReceive('getRegistry')->andReturn($registry)->byDefault();
     $context = m::mock('Behat\Behat\Context\ExtendedContextInterface');
     $context->shouldReceive('getMainContext')->andReturn($mainContext);
 

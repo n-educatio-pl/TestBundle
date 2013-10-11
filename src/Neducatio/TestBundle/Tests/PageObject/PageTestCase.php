@@ -2,6 +2,7 @@
 namespace Neducatio\TestBundle\Tests\PageObject;
 
 use \Mockery as m;
+use Behat\Mink\Element\TraversableElement;
 
 /**
  * Page test case
@@ -11,6 +12,7 @@ abstract class PageTestCase extends \PHPUnit_Framework_TestCase
   protected $harvester;
   protected $pageObject;
   protected $page;
+  protected $subpage;
 
   /**
    * Sets up
@@ -18,6 +20,7 @@ abstract class PageTestCase extends \PHPUnit_Framework_TestCase
   public function setUp()
   {
     $this->page = $this->getPage();
+    $this->subpage = $this->getSubPage();
     $this->pageObject = $this->getPageObject($this->page);
   }
 
@@ -36,10 +39,12 @@ abstract class PageTestCase extends \PHPUnit_Framework_TestCase
 
   /**
    * Do sth.
+   * 
+   * @param TraversableElement $page Page/subpage to be passed to validator
    *
    * @return PageObjectBuilder
    */
-  protected function getBuilder()
+  protected function getBuilder(TraversableElement $page)
   {
     $validator = m::mock('stdClass');
     $validator->shouldReceive('validate')->byDefault();
@@ -47,7 +52,7 @@ abstract class PageTestCase extends \PHPUnit_Framework_TestCase
     $this->harvester->shouldReceive('registerHooks')->byDefault();
     $awaiter = m::mock("Neducatio\TestBundle\Utility\Awaiter\PageAwaiter");
     $builder = m::mock('Neducatio\TestBundle\PageObject\PageObjectBuilder');
-    $builder->shouldReceive('getValidator')->andReturn($validator);
+    $builder->shouldReceive('getValidator')->andReturn($validator)->with($page);
     $builder->shouldReceive('getHarvester')->andReturn($this->harvester);
     $builder->shouldReceive('getAwaiter')->andReturn($awaiter);
 
@@ -62,5 +67,15 @@ abstract class PageTestCase extends \PHPUnit_Framework_TestCase
   protected function getPage()
   {
     return m::mock('\Behat\Mink\Element\DocumentElement');
+  }
+
+  /**
+   * Creates DocumentElement mock
+   *
+   * @return DocumentElement
+   */
+  protected function getSubPage()
+  {
+    return m::mock('\Behat\Mink\Element\NodeElement');
   }
 }
