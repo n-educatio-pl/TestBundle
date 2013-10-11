@@ -13,6 +13,7 @@ abstract class BasePageObject
   protected $builder;
   protected $page;
   protected $proofSelectorVisibility = false;
+  protected $proofSelector;
   protected $parent;
   protected $subPageObjectsData = array();
   protected $subPageObjects;
@@ -30,7 +31,37 @@ abstract class BasePageObject
     $this->builder = $builder;
     $this->parent = $parent;
     $this->builder->getValidator($page)->validate($page, $this->proofSelector, $this->proofSelectorVisibility);
-    $this->builder->getHarvester()->registerHooks($page, $this->proofSelector);
+    $this->builder->getHarvester()->registerHooks($this);
+  }
+
+  /**
+   * Get page element
+   *
+   * @return TraversableElement
+   */
+  public function getPageElement()
+  {
+      return $this->page;
+  }
+
+  /**
+   * Get proof selector
+   *
+   * @return string
+   */
+  public function getProofSelector()
+  {
+      return $this->proofSelector;
+  }
+
+  /**
+   * Get SubPageObjectsData
+   *
+   * @return array
+   */
+  public function getSubPageObjectsData()
+  {
+      return $this->subPageObjectsData;
   }
 
   /**

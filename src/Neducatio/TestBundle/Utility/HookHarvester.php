@@ -3,6 +3,7 @@
 namespace Neducatio\TestBundle\Utility;
 
 use \Behat\Mink\Element\TraversableElement;
+use \Neducatio\TestBundle\PageObject\PageObjectBuilder;
 
 /**
  * Description of HookHarvester
@@ -10,18 +11,27 @@ use \Behat\Mink\Element\TraversableElement;
 class HookHarvester
 {
   private $register = array();
+  private $builder;
 
+  /**
+   * Constructor
+   *
+   * @param \Neducatio\TestBundle\PageObject\PageObjectBuilder $builder Builder
+   */
+  public function __construct(PageObjectBuilder $builder)
+  {
+    $this->builder = $builder;
+  }
   /**
    * Registers Hooks
    *
-   * @param TraversableElement $page          Page
-   * @param string             $proofSelector Proof selector
+   * @param BasePageObject $pageObject PageObject witch harvest
    */
-  public function registerHooks(TraversableElement $page, $proofSelector)
+  public function registerHooks(\Neducatio\TestBundle\PageObject\BasePageObject $pageObject)
   {
-    $elements = $this->getNodeElements($page, $proofSelector);
+    $elements = $this->getNodeElements($pageObject->getPageElement(), $pageObject->getProofSelector());
     foreach ($elements as $element) {
-      $this->addElement($element);
+      $this->addElement($element, $pageObject);
     }
   }
 
@@ -80,12 +90,18 @@ class HookHarvester
   /**
    * Gets keys for element
    *
-   * @param NodeElement $element Element
+   * @param NodeElement    $element    Element
+   * @param BasePageObject $pageObject PageObject witch harvest
    */
-  private function addElement($element)
+  private function addElement($element, \Neducatio\TestBundle\PageObject\BasePageObject $pageObject)
   {
+    $subPageObjectsData = $pageObject->getSubPageObjectsData();
     foreach ($this->retrieveClassesForElement($element) as $key) {
-      $this->register[$key][] = $element;
+      $elementToRegister = $element;
+      if (array_key_exists($key, $subPageObjectsData)) {
+          $elementToRegister = $this->builder->build($subPageObjectsData[$key], $element, $pageObject);
+      }
+      $this->register[$key][] = $elementToRegister;
     }
   }
 

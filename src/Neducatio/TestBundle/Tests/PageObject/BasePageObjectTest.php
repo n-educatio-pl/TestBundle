@@ -36,6 +36,36 @@ class BasePageObjectTest extends PageTestCase
    *
    * @test
    */
+  public function getPageElement_returnPagePassedInConstructor()
+  {
+    $this->assertSame($this->page, $this->pageObject->getPageElement());
+  }
+
+  /**
+   * Do sth.
+   *
+   * @test
+   */
+  public function getProofSelector_returnProofSelectorFromPageObject()
+  {
+    $this->assertSame('selector', $this->pageObject->getProofSelector());
+  }
+
+  /**
+   * Do sth.
+   *
+   * @test
+   */
+  public function getSubPageObjectsData_returnSubPageObjectsDataFromPageObject()
+  {
+    $this->assertSame(array('some_selector' => 'someClass'), $this->pageObject->getSubPageObjectsData());
+  }
+
+  /**
+   * Do sth.
+   *
+   * @test
+   */
   public function get_someKeyPassed_shouldReturnHook()
   {
     $this->harvester->shouldReceive('get')->with('someKey', 0)->andReturn('hook');

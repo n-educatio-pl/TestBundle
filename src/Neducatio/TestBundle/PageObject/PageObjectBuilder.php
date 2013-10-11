@@ -27,23 +27,24 @@ class PageObjectBuilder
   {
     $this->nodeValidator = new NodeElementValidator();
     $this->documentValidator = new DocumentElementValidator();
-    $this->harvester = new HookHarvester();
+    $this->harvester = new HookHarvester($this);
     $this->awaiter = new PageAwaiter();
   }
 
   /**
    * Builds
    *
-   * @param string          $page    Page
-   * @param DocumentElement $element Document element
+   * @param string          $page             Page
+   * @param DocumentElement $element          Document element
+   * @param BasePageObject  $parentPageObject Page object which build new subpage (null if it is main pageobject)
    *
    * @return instance of page
    */
-  public function build($page, TraversableElement $element)
+  public function build($page, TraversableElement $element, BasePageObject $parentPageObject = null)
   {
     $this->awaiter->setPage($element);
 
-    return new $page($element, $this);
+    return new $page($element, $this, $parentPageObject);
   }
 
   /**
