@@ -2,17 +2,21 @@
 
 namespace Neducatio\TestBundle\PageObject;
 
+use Behat\Mink\Element\TraversableElement;
+use Behat\Mink\Element\NodeElement;
 use Behat\Mink\Element\DocumentElement;
 use Neducatio\TestBundle\Utility\DocumentElementValidator;
+use Neducatio\TestBundle\Utility\NodeElementValidator;
 use Neducatio\TestBundle\Utility\HookHarvester;
 use Neducatio\TestBundle\Utility\Awaiter\PageAwaiter;
 
 /**
- * Page object builder
+ * Page and subpage object builder
  */
 class PageObjectBuilder
 {
-  private $validator;
+  private $nodeValidator;
+  private $documentValidator;
   private $harvester;
   private $awaiter;
 
@@ -21,7 +25,8 @@ class PageObjectBuilder
    */
   public function __construct()
   {
-    $this->validator = new DocumentElementValidator();
+    $this->nodeValidator = new NodeElementValidator();
+    $this->documentValidator = new DocumentElementValidator();
     $this->harvester = new HookHarvester();
     $this->awaiter = new PageAwaiter();
   }
@@ -34,7 +39,7 @@ class PageObjectBuilder
    *
    * @return instance of page
    */
-  public function build($page, DocumentElement $element)
+  public function build($page, TraversableElement $element)
   {
     $this->awaiter->setPage($element);
 
@@ -43,12 +48,19 @@ class PageObjectBuilder
 
   /**
    * Gets validator
+   * 
+   * @param TraversableElement $page Validator for given page type will be returned
    *
-   * @return DocumentElementValidator
+   * @return TraversableElementValidator
    */
-  public function getValidator()
+  public function getValidator(TraversableElement $page)
   {
-    return $this->validator;
+    if ($page instanceof NodeElement) {
+
+        return $this->nodeValidator;
+    }
+
+    return $this->documentValidator;
   }
 
   /**

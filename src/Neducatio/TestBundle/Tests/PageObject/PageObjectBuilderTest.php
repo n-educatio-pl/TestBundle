@@ -49,10 +49,22 @@ class PageObjectBuilderTest extends \PHPUnit_Framework_TestCase
    *
    * @test
    */
-  public function getValidator_shouldReturnInstanceOfValidator()
+  public function getValidator_documentElementPassed_shouldReturnInstanceOfDocumentElementValidator()
   {
+    $documentElement = $this->getPage();
     $builder = $this->getBuilder();
-    $this->assertInstanceOf('Neducatio\TestBundle\Utility\DocumentElementValidator', $builder->getValidator());
+    $this->assertInstanceOf('Neducatio\TestBundle\Utility\DocumentElementValidator', $builder->getValidator($documentElement));
+  }
+  /**
+   * Do sth.
+   *
+   * @test
+   */
+  public function getValidator_nodeElementPassed_shouldReturnInstanceOfNodeElementValidator()
+  {
+    $nodeElement = m::mock('\Behat\Mink\Element\NodeElement');
+    $builder = $this->getBuilder();
+    $this->assertInstanceOf('Neducatio\TestBundle\Utility\NodeElementValidator', $builder->getValidator($nodeElement));
   }
 
   /**

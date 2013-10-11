@@ -2,7 +2,7 @@
 
 namespace Neducatio\TestBundle\Utility;
 
-use \Behat\Mink\Element\DocumentElement;
+use \Behat\Mink\Element\TraversableElement;
 
 /**
  * Description of HookHarvester
@@ -14,10 +14,10 @@ class HookHarvester
   /**
    * Registers Hooks
    *
-   * @param DocumentElement $page          Page
-   * @param string          $proofSelector Proof selector
+   * @param TraversableElement $page          Page
+   * @param string             $proofSelector Proof selector
    */
-  public function registerHooks(DocumentElement $page, $proofSelector)
+  public function registerHooks(TraversableElement $page, $proofSelector)
   {
     $elements = $this->getNodeElements($page, $proofSelector);
     foreach ($elements as $element) {
@@ -45,14 +45,14 @@ class HookHarvester
   /**
    * Retrieve harvest
    *
-   * @param DocumentElement $page          Page
-   * @param string          $proofSelector Proof selector
+   * @param TraversableElement $page          Page
+   * @param string             $proofSelector Proof selector
    *
    * @return NodeElement
    *
    * @throws \InvalidArgumentException
    */
-  private function retrieveHarvest(DocumentElement $page, $proofSelector)
+  private function retrieveHarvest(TraversableElement $page, $proofSelector)
   {
     $harvest = $page->find('css', $proofSelector);
     if ($harvest === null) {
@@ -65,12 +65,12 @@ class HookHarvester
   /**
    * Gets node elements
    *
-   * @param DocumentElement $page          Page
-   * @param string          $proofSelector Proof selector
+   * @param TraversableElement $page          Page
+   * @param string             $proofSelector Proof selector
    *
    * @return array
    */
-  private function getNodeElements(DocumentElement $page, $proofSelector)
+  private function getNodeElements(TraversableElement $page, $proofSelector)
   {
     $harvest = $this->retrieveHarvest($page, $proofSelector);
 
