@@ -4,6 +4,7 @@ namespace Neducatio\TestBundle\Utility;
 
 use \Behat\Mink\Element\TraversableElement;
 use \Neducatio\TestBundle\PageObject\PageObjectBuilder;
+use \Neducatio\TestBundle\PageObject\BasePageObject;
 
 /**
  * Description of HookHarvester
@@ -27,7 +28,7 @@ class HookHarvester
    *
    * @param BasePageObject $pageObject PageObject witch harvest
    */
-  public function registerHooks(\Neducatio\TestBundle\PageObject\BasePageObject $pageObject)
+  public function registerHooks(BasePageObject $pageObject)
   {
     $elements = $this->getNodeElements($pageObject->getPageElement(), $pageObject->getProofSelector());
     foreach ($elements as $element) {
@@ -90,19 +91,34 @@ class HookHarvester
   /**
    * Gets keys for element
    *
-   * @param NodeElement    $element    Element
-   * @param BasePageObject $pageObject PageObject witch harvest
+   * @param TraversableElement $element    Element
+   * @param BasePageObject     $pageObject PageObject witch harvest
    */
-  private function addElement($element, \Neducatio\TestBundle\PageObject\BasePageObject $pageObject)
+  private function addElement(TraversableElement $element, BasePageObject $pageObject)
   {
-    $subPageObjectsData = $pageObject->getSubPageObjectsData();
     foreach ($this->retrieveClassesForElement($element) as $key) {
-      $elementToRegister = $element;
-      if (array_key_exists($key, $subPageObjectsData)) {
-          $elementToRegister = $this->builder->build($subPageObjectsData[$key], $element, $pageObject);
-      }
-      $this->register[$key][] = $elementToRegister;
+      $this->register[$key][] = $this->getElementToRegister($element, $key, $pageObject);
     }
+  }
+
+  /**
+   * Returns page element or subpage element if exists for given class selector
+   *
+   * @param \Behat\Mink\Element\TraversableElement          $element    Page element
+   * @param string                                          $class      Element class
+   * @param \Neducatio\TestBundle\PageObject\BasePageObject $pageObject Page object
+   *
+   * @return TraversableElement
+   */
+  private function getElementToRegister(TraversableElement $element, $class, BasePageObject $pageObject)
+  {
+      $elementToRegister = $element;
+      $subpageObjectsdata = $pageObject->getSubPageObjectsData();
+      if (array_key_exists($class, $subpageObjectsdata)) {
+          $elementToRegister = $this->builder->build($subpageObjectsdata[$class], $element, $pageObject);
+      }
+
+      return $elementToRegister;
   }
 
   /**
