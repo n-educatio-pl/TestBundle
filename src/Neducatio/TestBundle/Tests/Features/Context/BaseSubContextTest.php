@@ -23,12 +23,12 @@ class BaseSubContextTest extends SubContextTestCase
   public function setUp()
   {
     $this->translator = m::mock('Symfony\Bundle\FrameworkBundle\Translation\Translator');
-    $builder = m::mock('Neducatio\TestBundle\PageObject\PageObjectBuilder');
-    $builder->shouldReceive('build')->andReturn('page');
+    $this->builder = m::mock('Neducatio\TestBundle\PageObject\PageObjectBuilder');
+    $this->builder->shouldReceive('build')->andReturn('page');
     $kernel = $this->getKernelMock();
     $this->registry = m::mock('Neducatio\TestBundle\Utility\Reqistry');
     $this->feature = new TestableBaseSubContext($kernel);
-    $this->feature->setBuilder($builder);
+    $this->feature->setBuilder($this->builder);
   }
 
   /**
@@ -96,6 +96,18 @@ class BaseSubContextTest extends SubContextTestCase
    * Do sth.
    *
    * @test
+   */
+  public function addFixture_someFixtureNamePassed_shouldAddFixtureToRegistry()
+  {
+    $this->feature->setParentContext($this->getParentContextMock());
+    $this->feature->getMainContext()->getRegistry()->shouldReceive('add')->with(\Neducatio\TestBundle\Features\Context\BaseSubContext::FIXTURES_KEY, "somefixture")->once();
+    $this->feature->addFixture("somefixture");
+  }
+
+  /**
+   * Do sth.
+   *
+   * @test
    * @expectedException RuntimeException
    * @expectedExceptionMessage Sub context has no parent
    */
@@ -118,6 +130,21 @@ class BaseSubContextTest extends SubContextTestCase
     $this->feature->setParentContext($parent);
     $this->feature->loadFixtures(array());
   }
+  /**
+   * Do sth.
+   *
+   * @test
+   */
+  public function loadFixtures_nullPassed_shouldGetFixturesFromRegistry()
+  {
+    $parent = $this->getParentContextMock();
+    $mainContext = $parent->getMainContext();
+    $mainContext->shouldReceive('loadFixtures')->with(array())->once();
+    $mainContext->getRegistry()->shouldReceive('get')->with(\Neducatio\TestBundle\Features\Context\BaseSubContext::FIXTURES_KEY)->once();
+    $this->feature->setParentContext($parent);
+    $this->feature->loadFixtures(null);
+  }
+
 
   /**
    * Do sth.

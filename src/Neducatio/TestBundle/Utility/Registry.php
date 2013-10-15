@@ -39,4 +39,18 @@ class Registry
     return $defaultValue;
   }
 
+  /**
+   * Add value
+   *
+   * @param string $key   key
+   * @param mixed  $value value
+   */
+  public function add($key, $value)
+  {
+    if (!array_key_exists($key, $this->store) || !is_array($this->store[$key])) {
+      $this->store[$key] = array();
+    }
+    $this->store[$key][] = $value;
+  }
+
 }

@@ -75,4 +75,33 @@ class RegistryTest extends \PHPUnit_Framework_TestCase
     $this->registry->set("someotherkey", $storedObject);
     $this->assertSame($storedObject, $this->registry->get("someotherkey"));
   }
+
+  /**
+   * @test
+   */
+  public function add_calledOnNonExistingKey_shouldCreateKeyAndAddValue()
+  {
+    $this->registry->add("somekey", "something");
+    $this->assertSame(array("something"), $this->registry->get("somekey"));
+  }
+
+  /**
+   * @test
+   */
+  public function add_calledOnExistingArrayKey_shouldAddValue()
+  {
+    $this->registry->add("somekey", "something");
+    $this->registry->add("somekey", "somethingelse");
+    $this->assertSame(array("something", "somethingelse"), $this->registry->get("somekey"));
+  }
+
+  /**
+   * @test
+   */
+  public function add_calledOnExistingNonArrayKey_shouldRewriteKeyAndAddValue()
+  {
+    $this->registry->set("somekey", "something");
+    $this->registry->add("somekey", "somethingelse");
+    $this->assertSame(array("somethingelse"), $this->registry->get("somekey"));
+  }
 }
