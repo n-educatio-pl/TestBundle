@@ -14,6 +14,7 @@ abstract class BaseSubContext extends BehatContext implements KernelAwareInterfa
   protected $parameters;
   protected $builder;
   const PAGE_KEY = 'page';
+  const FIXTURES_KEY = 'fixtures';
 
   /**
    * Initializes context with parameters from behat.yml.
@@ -38,12 +39,24 @@ abstract class BaseSubContext extends BehatContext implements KernelAwareInterfa
   }
 
   /**
+   * Add fixture to load
+   *
+   * @param string $fixture Fixture to add
+   */
+  public function addFixture($fixture)
+  {
+    $this->getRegistry()->add(self::FIXTURES_KEY, $fixture);
+  }
+  /**
    * Load fixtures
    *
    * @param array $fixtures Array with fixture namespaces
    */
-  public function loadFixtures($fixtures)
+  public function loadFixtures($fixtures = null)
   {
+    if ($fixtures == null) {
+      $fixtures = $this->getRegistry()->get(self::FIXTURES_KEY);
+    }
     $this->getMainContext()->loadFixtures($fixtures);
   }
 
