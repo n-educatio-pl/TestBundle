@@ -8,7 +8,7 @@ use Mockery as m;
 /**
  * Do sth.
  *
- * @covers Neducatio\TestBundle\Tests\Features\Context\CommonContext
+ * @covers Neducatio\TestBundle\Features\Context\CommonContext
  */
 class CommonContextShould extends SubContextTestCase
 {
