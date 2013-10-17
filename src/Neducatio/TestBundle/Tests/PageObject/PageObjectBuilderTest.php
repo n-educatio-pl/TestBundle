@@ -49,6 +49,58 @@ class PageObjectBuilderTest extends \PHPUnit_Framework_TestCase
    *
    * @test
    */
+  public function build_validPageNameAndNothingPassedAndSessionIsSet_shouldReturnInstanceOfGivenPageAndSetDocumentElementInAwaiter()
+  {
+    $context = m::mock('\Neducatio\TestBundle\Features\Context\BaseFeatureContext');
+    $documentElement = $this->getPage();
+    $session = m::mock('\Behat\Mink\Session');
+    $session->shouldReceive('getPage')->andReturn($documentElement);
+    $context->shouldReceive('getSession')->andReturn($session);
+
+    $builder = new PageObjectBuilder($context);
+    $basePage = $builder->build(TestableBasePage::NAME);
+    $this->assertInstanceOf('Neducatio\TestBundle\Tests\PageObject\TestableBasePage', $basePage);
+    $this->assertSame($documentElement, $builder->getAwaiter()->getPage());
+  }
+
+  /**
+   * Do sth.
+   *
+   * @test
+   *
+   * @expectedException \RuntimeException
+   * @expectedExceptionMessage Session not set
+   */
+  public function build_validPageNameAndNothingPassedAndSessionIsNotSet_shouldThrowAnException()
+  {
+    $context = m::mock('\Neducatio\TestBundle\Features\Context\BaseFeatureContext');
+    $context->shouldReceive('getSession')->andReturnNull();
+
+    $builder = new PageObjectBuilder($context);
+    $builder->build(TestableBasePage::NAME);
+  }
+
+  /**
+   * Do sth.
+   *
+   * @test
+   *
+   * @expectedException \InvalidArgumentException
+   * @expectedExceptionMessage Page class doesn't exist
+   */
+  public function build_NotValidPageName_shouldThrowAnException()
+  {
+    $context = m::mock('\Neducatio\TestBundle\Features\Context\BaseFeatureContext');
+
+    $builder = new PageObjectBuilder($context);
+    $builder->build('nieistnieje');
+  }
+
+  /**
+   * Do sth.
+   *
+   * @test
+   */
   public function getValidator_documentElementPassed_shouldReturnInstanceOfDocumentElementValidator()
   {
     $documentElement = $this->getPage();
@@ -96,7 +148,14 @@ class PageObjectBuilderTest extends \PHPUnit_Framework_TestCase
    */
   private function getBuilder()
   {
-    return new PageObjectBuilder();
+    return new PageObjectBuilder($this->getBaseFeatureContext());
+  }
+
+  private function getBaseFeatureContext()
+  {
+    $context = m::mock('\Neducatio\TestBundle\Features\Context\BaseFeatureContext');
+
+    return $context;
   }
 
   /**

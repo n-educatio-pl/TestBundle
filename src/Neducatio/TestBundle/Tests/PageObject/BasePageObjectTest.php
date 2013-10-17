@@ -106,6 +106,19 @@ class BasePageObjectTest extends PageTestCase
   }
 
   /**
+   * Do sth.
+   *
+   * @test
+   */
+  public function buildPageObjectByName_ValidNamePassedAndSessionIsSet_shouldReturnValidNewPageObject()
+  {
+    $builder = $this->getBuilder($this->page);
+    $builder->shouldReceive('build')->with('validName')->andReturn('PageObject')->once();
+    $this->pageObject = new TestableBasePage($this->page, $builder);
+    $this->assertSame('PageObject', $this->pageObject->buildPageObjectByName('validName'));
+  }
+
+  /**
    * Gets PageObject
    *
    * @return PageObject

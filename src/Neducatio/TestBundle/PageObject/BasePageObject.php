@@ -106,4 +106,16 @@ abstract class BasePageObject
   {
     return $this->parent;
   }
+
+  /**
+   * Build new page object
+   *
+   * @param string $name page object class name
+   *
+   * @return BasePageObject
+   */
+  public function buildPageObjectByName($name)
+  {
+    return $this->builder->build($name);
+  }
 }
