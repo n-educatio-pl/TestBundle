@@ -19,10 +19,8 @@ class CommonContextShould extends SubContextTestCase
      */
     public function setUp()
     {
-      $parameters = array(
-        'builder' => $this->getPageObjectBuilderMock()
-      );
-      $this->context = new CommonContext($parameters);
+      $this->context = new CommonContext($this->getKernelMock());
+      $this->context->setBuilder($this->getPageObjectBuilderMock());
       $this->context->setParentContext($this->getParentContextMock());
     }
     /**
@@ -43,5 +41,14 @@ class CommonContextShould extends SubContextTestCase
                 ->with($expectedFixtures);
 
         $this->context->systemReadyToBeTested();
+    }
+
+    private function getKernelMock()
+    {
+      $container = m::mock('stdClass');
+      $kernel = m::mock('Symfony\Component\HttpKernel\KernelInterface');
+      $kernel->shouldReceive('getContainer')->andReturn($container);
+
+      return $kernel;
     }
 }
