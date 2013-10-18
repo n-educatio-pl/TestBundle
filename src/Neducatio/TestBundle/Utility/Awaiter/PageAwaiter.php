@@ -12,9 +12,9 @@ class PageAwaiter extends AwaiterBase
   /**
    * Set page
    *
-   * @param \Behat\Mink\Element\DocumentElement $page Page
+   * @param \Behat\Mink\Element\TraversableElement $page Page
    */
-  public function setPage(\Behat\Mink\Element\DocumentElement $page)
+  public function setPage(\Behat\Mink\Element\TraversableElement $page)
   {
     $this->page = $page;
   }
@@ -22,7 +22,7 @@ class PageAwaiter extends AwaiterBase
   /**
    * Get page
    *
-   * @return \Behat\Mink\Element\DocumentElement
+   * @return \Behat\Mink\Element\TraversableElement
    */
   public function getPage()
   {
@@ -37,12 +37,12 @@ class PageAwaiter extends AwaiterBase
    *
    * @return null (closure returns bool, not this function)
    *
-   * @throws DocumentElementNotSetException
+   * @throws TraversableElementNotSetException
    */
   public function waitUntilVisible($selector, $type = 'css')
   {
     if ($this->page === null) {
-      throw new DocumentElementNotSetException();
+      throw new TraversableElementNotSetException();
     }
     $page = $this->page;
     $this->waitUntilTrue(function() use ($page, $selector, $type) {
@@ -58,12 +58,12 @@ class PageAwaiter extends AwaiterBase
    *
    * @return null (closure returns bool, not this function)
    *
-   * @throws DocumentElementNotSetException
+   * @throws TraversableElementNotSetException
    */
   public function waitUntilDisappear($selector, $type = 'css')
   {
     if ($this->page === null) {
-      throw new DocumentElementNotSetException();
+      throw new TraversableElementNotSetException();
     }
     $page = $this->page;
     $this->waitUntilFalse(function() use ($page, $selector, $type) {

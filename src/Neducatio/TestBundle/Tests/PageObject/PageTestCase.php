@@ -55,6 +55,8 @@ abstract class PageTestCase extends \PHPUnit_Framework_TestCase
     $builder->shouldReceive('getValidator')->andReturn($validator)->with($page);
     $builder->shouldReceive('getHarvester')->andReturn($this->harvester);
     $builder->shouldReceive('getAwaiter')->andReturn($awaiter);
+    $createdPageObject = m::mock('Neducatio\TestBundle\PageObject\BasePageObject');
+    $builder->shouldReceive('build')->andReturn($createdPageObject)->byDefault();
 
     return $builder;
   }

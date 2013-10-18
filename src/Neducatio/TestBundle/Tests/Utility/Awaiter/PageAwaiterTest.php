@@ -44,9 +44,9 @@ class PageAwaiterTest extends \PHPUnit_Framework_TestCase
 
   /**
    * @test
-   * @expectedException \Neducatio\TestBundle\Utility\Awaiter\DocumentElementNotSetException
+   * @expectedException \Neducatio\TestBundle\Utility\Awaiter\TraversableElementNotSetException
    */
-  public function waitUntilVisible_pageNotSetted_shouldThrowException()
+  public function waitUntilVisible_pageNotSet_shouldThrowException()
   {
     $awaiter = $this->getAwaiter();
     $awaiter->waitUntilVisible("selector", "css");
@@ -92,9 +92,21 @@ class PageAwaiterTest extends \PHPUnit_Framework_TestCase
 
   /**
    * @test
-   * @expectedException \Neducatio\TestBundle\Utility\Awaiter\DocumentElementNotSetException
    */
-  public function waitUntilDisappear_pageNotSetted_shouldThrowException()
+  public function waitUntilVisible_nodeElementSet_elementPresentAndVisible_shouldNotThrowException()
+  {
+    $selector = "#t_element";
+    $type = "css";
+    $page = $this->createNodeElementMockWithVisibleElement($selector, $type);
+    $awaiter = $this->getAwaiter($page);
+    $awaiter->waitUntilVisible($selector, $type);
+  }
+
+  /**
+   * @test
+   * @expectedException \Neducatio\TestBundle\Utility\Awaiter\TraversableElementNotSetException
+   */
+  public function waitUntilDisappear_pageNotSet_shouldThrowException()
   {
     $awaiter = $this->getAwaiter();
     $awaiter->waitUntilDisappear("selector", "css");
@@ -119,6 +131,17 @@ class PageAwaiterTest extends \PHPUnit_Framework_TestCase
   {
     $selector = "#t_element";
     $page = $this->createPageMockNotContainingElement($selector);
+    $awaiter = $this->getAwaiter($page);
+    $awaiter->waitUntilDisappear($selector, 'css');
+  }
+
+  /**
+   * @test
+   */
+  public function waitUntilDisappear_nodeElementSet_elementDisappear_shouldNotThrowException()
+  {
+    $selector = "#t_element";
+    $page = $this->createNodeElementMockNotContainingElement($selector);
     $awaiter = $this->getAwaiter($page);
     $awaiter->waitUntilDisappear($selector, 'css');
   }
@@ -151,6 +174,16 @@ class PageAwaiterTest extends \PHPUnit_Framework_TestCase
     return $this->createPageMockWithConfiguredElement($selector, $type, true, true);
   }
 
+  private function createNodeElementMockWithVisibleElement($selector, $type)
+  {
+    $page = m::mock("\Behat\Mink\Element\NodeElement");
+    $element = m::mock("\Behat\Mink\Element\NodeElement");
+    $element->shouldReceive("isVisible")->andReturn(true)->atLeast()->times(1);
+    $page->shouldReceive("find")->with($type, $selector)->andReturn($element)->atLeast()->times(1);
+
+    return $page;
+  }
+
   private function createPageMockWithOptionalElement($selector, $hasElement)
   {
     $page = m::mock("\Behat\Mink\Element\DocumentElement");
@@ -169,11 +202,19 @@ class PageAwaiterTest extends \PHPUnit_Framework_TestCase
     return $this->createPageMockWithOptionalElement($selector, false);
   }
 
+  private function createNodeElementMockNotContainingElement($selector)
+  {
+    $page = m::mock("\Behat\Mink\Element\NodeElement");
+    $page->shouldReceive("has")->with('css', $selector)->andReturn(false)->atLeast()->times(1);
+
+    return $page;
+  }
+
   /**
    * Create and return new Awaiter object
    *
    * @param DocumentElement $page $page
-   * 
+   *
    * @return PageAwaiter
    */
   private function getAwaiter($page = null)
