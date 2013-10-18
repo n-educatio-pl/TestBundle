@@ -86,7 +86,7 @@ class PageObjectBuilderTest extends \PHPUnit_Framework_TestCase
    * @test
    *
    * @expectedException \InvalidArgumentException
-   * @expectedExceptionMessage Page class doesn't exist
+   * @expectedExceptionMessage Page class "nieistnieje" doesn't exist
    */
   public function build_NotValidPageName_shouldThrowAnException()
   {
