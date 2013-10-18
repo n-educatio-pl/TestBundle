@@ -52,5 +52,25 @@ class Registry
     }
     $this->store[$key][] = $value;
   }
+  /**
+   * Set or get value.
+   *
+   * @param string $key   key
+   * @param mixed  $value value
+   *
+   * @return mixed
+   */
+  public function access($key, $value = null)
+  {
+    if (func_num_args() === 2) {
+      $this->set($key, $value);
+
+      return $value;
+    }
+    if (array_key_exists($key, $this->store)) {
+      return $this->store[$key];
+    }
+    throw new \RuntimeException("Value under key {$key} not found.");
+  }
 
 }
