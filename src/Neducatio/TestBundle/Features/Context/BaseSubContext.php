@@ -106,6 +106,21 @@ abstract class BaseSubContext extends BehatContext
   {
     $this->getRegistry()->set(self::PAGE_KEY, $this->builder->build($pageObjectName, $this->getBrowserPage()));
   }
+  /**
+   * Retrieves or sets page object in registry. If no value passed only gets page object from registry.
+   *
+   * @param \Neducatio\TestBundle\PageObject\BasePageObject $pageObject Page object to set (optional)
+   *
+   * @return \Neducatio\TestBundle\PageObject\BasePageObject
+   */
+  public function page(\Neducatio\TestBundle\PageObject\BasePageObject $pageObject = null)
+  {
+    if (func_num_args() > 0) {
+      return $this->getRegistry()->access(self::PAGE_KEY, $pageObject);
+    }
+
+    return $this->getRegistry()->access(self::PAGE_KEY);
+  }
 
   /**
    * @throws \RuntimeException

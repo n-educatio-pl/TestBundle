@@ -82,6 +82,38 @@ class BaseSubContextTest extends SubContextTestCase
     $this->feature->setParentContext($parent);
     $this->feature->setPage('page');
   }
+  /**
+   * access page test
+   *
+   * @test
+   */
+  public function page_noParameters_shouldUseRegistryAccessToRetrievePage()
+  {
+    $pageObject = m::mock('\Neducatio\TestBundle\PageObject\BasePageObject');
+    $this->feature->setParentContext($this->getParentContextMock());
+    $this->feature->getMainContext()->getRegistry()
+        ->shouldReceive('access')->once()
+        ->with(TestableBaseSubContext::PAGE_KEY)
+        ->andReturn($pageObject);
+
+    $this->assertSame($pageObject, $this->feature->page());
+  }
+  /**
+   * access page test
+   *
+   * @test
+   */
+  public function page_pageObjectPassed_shouldUseRegistryAccessToSetPage()
+  {
+    $pageObject = m::mock('\Neducatio\TestBundle\PageObject\BasePageObject');
+    $this->feature->setParentContext($this->getParentContextMock());
+    $this->feature->getMainContext()->getRegistry()
+        ->shouldReceive('access')->once()
+        ->with(TestableBaseSubContext::PAGE_KEY, $pageObject)
+        ->andReturn($pageObject);
+
+    $this->assertSame($pageObject, $this->feature->page($pageObject));
+  }
 
   /**
    * @test
