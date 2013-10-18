@@ -53,7 +53,7 @@ class PageObjectBuilder
 
       return new $page($element, $this, $parentPageObject);
     } else {
-      throw new \InvalidArgumentException("Page class doesn't exist");
+      throw new \InvalidArgumentException("Page class \"{$page}\" doesn't exist");
     }
   }
 
