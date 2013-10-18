@@ -82,6 +82,20 @@ class HookHarvesterTest extends \PHPUnit_Framework_TestCase
    *
    * @test
    */
+  public function registerHooks_validHarvestWithTwoHooksWithSomeUpperCaseLettersInDifferentNodes_shouldReturnTwoHooksInArray()
+  {
+    $hook1 = $this->getHook('t_hOOk1');
+    $hook2 = $this->getHook('t_HooK2');
+    $harvest = $this->getNodeElement(array($hook1, $hook2));
+    $this->harvester->registerHooks($this->getPageObject($this->getPageWithResult($harvest), '.t_someSelector'));
+    $this->assertSame(array('hOOk1', 'HooK2'), array_keys($this->harvester->getRegister()));
+  }
+
+  /**
+   * Do sth.
+   *
+   * @test
+   */
   public function registerHooks_validHarvestWithTwoHooksInDifferentNodesWithSomeGarbageClasses_shouldReturnTwoHooksInArray()
   {
     $hook1 = $this->getHook('klasa klasa_klas t_hook1 klasa_klas');

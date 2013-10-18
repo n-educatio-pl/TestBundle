@@ -132,7 +132,7 @@ class HookHarvester
   {
     $classes = $element->getAttribute('class');
     $matches = array();
-    preg_match_all('/t_([a-z0-9\_]+)/', $classes, $matches);
+    preg_match_all('/t_([a-zA-Z0-9\_]+)/', $classes, $matches);
 
     return $matches[1];
   }
