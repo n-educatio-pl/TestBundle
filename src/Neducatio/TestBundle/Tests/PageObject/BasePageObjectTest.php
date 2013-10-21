@@ -68,8 +68,19 @@ class BasePageObjectTest extends PageTestCase
    */
   public function get_someKeyPassed_shouldReturnHook()
   {
-    $this->harvester->shouldReceive('get')->with('someKey', 0)->andReturn('hook');
+    $this->harvester->shouldReceive('get')->with('someKey', 0)->andReturn('hook')->once();
     $this->assertSame('hook', $this->pageObject->get('someKey'));
+  }
+
+  /**
+   * Do sth.
+   *
+   * @test
+   */
+  public function has_someKeyPassed_shouldReturnHasFromHook()
+  {
+    $this->harvester->shouldReceive('has')->with('someKey')->andReturn(true)->once();
+    $this->assertSame(true, $this->pageObject->has('someKey'));
   }
 
   /**

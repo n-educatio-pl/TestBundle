@@ -220,6 +220,29 @@ class HookHarvesterTest extends \PHPUnit_Framework_TestCase
     $this->assertInstanceOf(get_class($hook2), $this->harvester->get('hook1', 1));
   }
 
+  /**
+   * Do sth.
+   *
+   * @test
+   */
+  public function has_notExistingKeyIsPassed_shouldReturnFalse()
+  {
+    $this->assertFalse($this->harvester->has('not_existing_key'));
+  }
+
+  /**
+   * Do sth.
+   *
+   * @test
+   */
+  public function has_existingKeyIsPassed_shouldReturnTrue()
+  {
+    $hook = $this->getHook('t_existing_key');
+    $harvest = $this->getNodeElement(array($hook));
+    $this->harvester->registerHooks($this->getPageObject($this->getPageWithResult($harvest), '.t_someSelector'));
+    $this->assertTrue($this->harvester->has('existing_key'));
+  }
+
   private function getPageObject(\Behat\Mink\Element\TraversableElement $element, $selector, $subPageObjectsData = array())
   {
       $pageObject = m::mock('\Neducatio\TestBundle\PageObject\BasePageObject');

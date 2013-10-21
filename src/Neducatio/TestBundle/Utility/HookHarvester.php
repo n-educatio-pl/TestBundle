@@ -54,6 +54,18 @@ class HookHarvester
   }
 
   /**
+   * Check if hook exists
+   *
+   * @param string $key Key hook to check
+   *
+   * @return bool
+   */
+  public function has($key)
+  {
+    return array_key_exists($key, $this->register);
+  }
+
+  /**
    * Retrieve harvest
    *
    * @param TraversableElement $page          Page
