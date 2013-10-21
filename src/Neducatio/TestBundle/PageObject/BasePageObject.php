@@ -78,6 +78,18 @@ abstract class BasePageObject
   }
 
   /**
+   * Check if hook exists
+   *
+   * @param string $key Key hook to check
+   *
+   * @return bool
+   */
+  public function has($key)
+  {
+    return $this->builder->getHarvester()->has($key);
+  }
+
+  /**
    * Get Awaiter from Builder
    *
    * @return PageAwaiter
