@@ -90,8 +90,9 @@ class BasePageObjectTest extends PageTestCase
    */
   public function getAwaiter_shouldReturnAwaiterFromBuilder()
   {
-    $this->assertInstanceOf('Neducatio\TestBundle\Utility\Awaiter\PageAwaiter', $this->pageObject->getAwaiter());
-    $this->assertSame($this->pageObject->builder->getAwaiter(), $this->pageObject->getAwaiter());
+    $node = m::mock('\Behat\Mink\Element\NodeElement');
+    $this->assertInstanceOf('Neducatio\TestBundle\Utility\Awaiter\PageAwaiter', $this->pageObject->getAwaiter($node));
+    $this->assertSame($this->pageObject->builder->getAwaiter($node), $this->pageObject->getAwaiter($node));
   }
 
   /**

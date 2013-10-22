@@ -96,7 +96,7 @@ abstract class BasePageObject
    */
   public function getAwaiter()
   {
-    return $this->builder->getAwaiter();
+    return $this->builder->getAwaiter($this->page);
   }
 
 //  /**
