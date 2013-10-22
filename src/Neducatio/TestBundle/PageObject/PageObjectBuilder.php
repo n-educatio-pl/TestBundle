@@ -49,7 +49,6 @@ class PageObjectBuilder
   {
     if (class_exists($page)) {
       $element = $this->getCurrentBrowserPage($element);
-      $this->awaiter->setPage($element);
 
       return new $page($element, $this, $parentPageObject);
     } else {
@@ -99,10 +98,14 @@ class PageObjectBuilder
   /**
    * Gets awaiter
    *
+   * @param TraversableElement $element Root element to be searched by awaiter
+   *
    * @return PageAwaiter
    */
-  public function getAwaiter()
+  public function getAwaiter(TraversableElement $element)
   {
+    $this->awaiter->setPage($element);
+
     return $this->awaiter;
   }
 }
