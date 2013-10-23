@@ -18,7 +18,6 @@ class PageObjectBuilder
 {
   private $nodeValidator;
   private $documentValidator;
-  private $harvester;
   private $awaiter;
   private $context;
 
@@ -31,7 +30,6 @@ class PageObjectBuilder
   {
     $this->nodeValidator = new NodeElementValidator();
     $this->documentValidator = new DocumentElementValidator();
-    $this->harvester = new HookHarvester($this);
     $this->awaiter = new PageAwaiter();
     $this->context = $context;
   }
@@ -49,8 +47,9 @@ class PageObjectBuilder
   {
     if (class_exists($page)) {
       $element = $this->getCurrentBrowserPage($element);
+      $harvester = new HookHarvester($this);
 
-      return new $page($element, $this, $parentPageObject);
+      return new $page($element, $this, $harvester, $parentPageObject);
     } else {
       throw new \InvalidArgumentException("Page class \"{$page}\" doesn't exist");
     }
@@ -83,16 +82,6 @@ class PageObjectBuilder
     }
 
     return $this->documentValidator;
-  }
-
-  /**
-   * Gets harvester
-   *
-   * @return HookHarvester
-   */
-  public function getHarvester()
-  {
-    return $this->harvester;
   }
 
   /**
