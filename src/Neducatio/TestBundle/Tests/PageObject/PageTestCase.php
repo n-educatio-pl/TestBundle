@@ -39,7 +39,7 @@ abstract class PageTestCase extends \PHPUnit_Framework_TestCase
 
   /**
    * Do sth.
-   * 
+   *
    * @param TraversableElement $page Page/subpage to be passed to validator
    *
    * @return PageObjectBuilder
@@ -48,17 +48,22 @@ abstract class PageTestCase extends \PHPUnit_Framework_TestCase
   {
     $validator = m::mock('stdClass');
     $validator->shouldReceive('validate')->byDefault();
-    $this->harvester = m::mock('Neducatio\TestBundle\Utility\HookHarvester');
-    $this->harvester->shouldReceive('registerHooks')->byDefault();
     $awaiter = m::mock("Neducatio\TestBundle\Utility\Awaiter\PageAwaiter");
     $builder = m::mock('Neducatio\TestBundle\PageObject\PageObjectBuilder');
     $builder->shouldReceive('getValidator')->andReturn($validator)->with($page);
-    $builder->shouldReceive('getHarvester')->andReturn($this->harvester);
     $builder->shouldReceive('getAwaiter')->andReturn($awaiter);
     $createdPageObject = m::mock('Neducatio\TestBundle\PageObject\BasePageObject');
     $builder->shouldReceive('build')->andReturn($createdPageObject)->byDefault();
 
     return $builder;
+  }
+
+  protected function getHarvester()
+  {
+    $this->harvester = m::mock('Neducatio\TestBundle\Utility\HookHarvester');
+    $this->harvester->shouldReceive('registerHooks')->byDefault();
+
+    return $this->harvester;
   }
 
   /**

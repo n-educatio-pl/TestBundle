@@ -122,17 +122,6 @@ class PageObjectBuilderTest extends \PHPUnit_Framework_TestCase
    *
    * @test
    */
-  public function getHarvester_shouldReturnInstanceOfValidator()
-  {
-    $builder = $this->getBuilder();
-    $this->assertInstanceOf('Neducatio\TestBundle\Utility\HookHarvester', $builder->getHarvester());
-  }
-
-  /**
-   * Do sth.
-   *
-   * @test
-   */
   public function getAwaiter_shouldReturnInstanceOfPageAwaiterWithSetElement()
   {
     $builder = $this->getBuilder();
