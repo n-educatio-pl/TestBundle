@@ -2,7 +2,7 @@
 
 namespace Neducatio\TestBundle\PageObject;
 
-use \Behat\Mink\Element\DocumentElement;
+use Neducatio\TestBundle\Utility\HookHarvester;
 use \Behat\Mink\Element\TraversableElement;
 
 /**
@@ -15,23 +15,26 @@ abstract class BasePageObject
   protected $proofSelectorVisibility = false;
   protected $proofSelector;
   protected $parent;
+  protected $harvester;
   protected $subPageObjectsData = array();
   protected $subPageObjects;
 
   /**
    * Do sth.
    *
-   * @param TraversableElement $page    Page used to instantiate PageObject
-   * @param PageObjectBuilder  $builder Page object builder
-   * @param BasePageObject     $parent  Subpage object parent
+   * @param TraversableElement $page      Page used to instantiate PageObject
+   * @param PageObjectBuilder  $builder   Page object builder
+   * @param HookHarvester      $harvester Hook harvester for this page
+   * @param BasePageObject     $parent    Subpage object parent
    */
-  public function __construct(TraversableElement $page, PageObjectBuilder $builder, BasePageObject $parent = null)
+  public function __construct(TraversableElement $page, PageObjectBuilder $builder, HookHarvester $harvester, BasePageObject $parent = null)
   {
     $this->page = $page;
     $this->builder = $builder;
     $this->parent = $parent;
+    $this->harvester = $harvester;
     $this->builder->getValidator($page)->validate($page, $this->proofSelector, $this->proofSelectorVisibility);
-    $this->builder->getHarvester()->registerHooks($this);
+    $this->harvester->registerHooks($this);
   }
 
   /**
@@ -74,7 +77,19 @@ abstract class BasePageObject
    */
   public function get($key, $place = 0)
   {
-    return $this->builder->getHarvester()->get($key, $place);
+    return $this->harvester->get($key, $place);
+  }
+
+  /**
+   * Check if hook exists
+   *
+   * @param string $key Key hook to check
+   *
+   * @return bool
+   */
+  public function has($key)
+  {
+    return $this->harvester->has($key);
   }
 
   /**
@@ -84,7 +99,7 @@ abstract class BasePageObject
    */
   public function getAwaiter()
   {
-    return $this->builder->getAwaiter();
+    return $this->builder->getAwaiter($this->page);
   }
 
 //  /**

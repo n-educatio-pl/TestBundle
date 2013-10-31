@@ -54,6 +54,18 @@ class HookHarvester
   }
 
   /**
+   * Check if hook exists
+   *
+   * @param string $key Key hook to check
+   *
+   * @return bool
+   */
+  public function has($key)
+  {
+    return array_key_exists($key, $this->register);
+  }
+
+  /**
    * Retrieve harvest
    *
    * @param TraversableElement $page          Page
@@ -132,7 +144,7 @@ class HookHarvester
   {
     $classes = $element->getAttribute('class');
     $matches = array();
-    preg_match_all('/t_([a-z0-9\_]+)/', $classes, $matches);
+    preg_match_all('/t_([a-zA-Z0-9\_]+)/', $classes, $matches);
 
     return $matches[1];
   }

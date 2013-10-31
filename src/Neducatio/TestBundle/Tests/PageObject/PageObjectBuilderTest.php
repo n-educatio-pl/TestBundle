@@ -35,13 +35,12 @@ class PageObjectBuilderTest extends \PHPUnit_Framework_TestCase
    *
    * @test
    */
-  public function build_validPageNameAndDocumentElementArePassed_shouldReturnInstanceOfGivenPageAndSetDocumentElementInAwaiter()
+  public function build_validPageNameAndDocumentElementArePassed_shouldReturnInstanceOfGivenPage()
   {
     $builder = $this->getBuilder();
     $documentElement = $this->getPage();
     $basePage = $builder->build(TestableBasePage::NAME, $documentElement);
     $this->assertInstanceOf('Neducatio\TestBundle\Tests\PageObject\TestableBasePage', $basePage);
-    $this->assertSame($documentElement, $builder->getAwaiter()->getPage());
   }
 
   /**
@@ -49,7 +48,7 @@ class PageObjectBuilderTest extends \PHPUnit_Framework_TestCase
    *
    * @test
    */
-  public function build_validPageNameAndNothingPassedAndSessionIsSet_shouldReturnInstanceOfGivenPageAndSetDocumentElementInAwaiter()
+  public function build_validPageNameAndNothingPassedAndSessionIsSet_shouldReturnInstanceOfGivenPage()
   {
     $context = m::mock('\Neducatio\TestBundle\Features\Context\BaseFeatureContext');
     $documentElement = $this->getPage();
@@ -60,7 +59,6 @@ class PageObjectBuilderTest extends \PHPUnit_Framework_TestCase
     $builder = new PageObjectBuilder($context);
     $basePage = $builder->build(TestableBasePage::NAME);
     $this->assertInstanceOf('Neducatio\TestBundle\Tests\PageObject\TestableBasePage', $basePage);
-    $this->assertSame($documentElement, $builder->getAwaiter()->getPage());
   }
 
   /**
@@ -86,7 +84,7 @@ class PageObjectBuilderTest extends \PHPUnit_Framework_TestCase
    * @test
    *
    * @expectedException \InvalidArgumentException
-   * @expectedExceptionMessage Page class doesn't exist
+   * @expectedExceptionMessage Page class "nieistnieje" doesn't exist
    */
   public function build_NotValidPageName_shouldThrowAnException()
   {
@@ -124,21 +122,13 @@ class PageObjectBuilderTest extends \PHPUnit_Framework_TestCase
    *
    * @test
    */
-  public function getHarvester_shouldReturnInstanceOfValidator()
+  public function getAwaiter_shouldReturnInstanceOfPageAwaiterWithSetElement()
   {
     $builder = $this->getBuilder();
-    $this->assertInstanceOf('Neducatio\TestBundle\Utility\HookHarvester', $builder->getHarvester());
-  }
-
-  /**
-   * Do sth.
-   *
-   * @test
-   */
-  public function getAwaiter_shouldReturnInstanceOfPageAvaiter()
-  {
-    $builder = $this->getBuilder();
-    $this->assertInstanceOf('Neducatio\TestBundle\Utility\Awaiter\PageAwaiter', $builder->getAwaiter());
+    $element = $this->getNodeElement();
+    $awaiter = $builder->getAwaiter($element);
+    $this->assertInstanceOf('Neducatio\TestBundle\Utility\Awaiter\PageAwaiter', $awaiter);
+    $this->assertSame($element, $awaiter->getPage());
   }
 
   /**

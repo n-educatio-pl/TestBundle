@@ -68,8 +68,19 @@ class BasePageObjectTest extends PageTestCase
    */
   public function get_someKeyPassed_shouldReturnHook()
   {
-    $this->harvester->shouldReceive('get')->with('someKey', 0)->andReturn('hook');
+    $this->harvester->shouldReceive('get')->with('someKey', 0)->andReturn('hook')->once();
     $this->assertSame('hook', $this->pageObject->get('someKey'));
+  }
+
+  /**
+   * Do sth.
+   *
+   * @test
+   */
+  public function has_someKeyPassed_shouldReturnHasFromHook()
+  {
+    $this->harvester->shouldReceive('has')->with('someKey')->andReturn(true)->once();
+    $this->assertSame(true, $this->pageObject->has('someKey'));
   }
 
   /**
@@ -79,8 +90,9 @@ class BasePageObjectTest extends PageTestCase
    */
   public function getAwaiter_shouldReturnAwaiterFromBuilder()
   {
-    $this->assertInstanceOf('Neducatio\TestBundle\Utility\Awaiter\PageAwaiter', $this->pageObject->getAwaiter());
-    $this->assertSame($this->pageObject->builder->getAwaiter(), $this->pageObject->getAwaiter());
+    $node = m::mock('\Behat\Mink\Element\NodeElement');
+    $this->assertInstanceOf('Neducatio\TestBundle\Utility\Awaiter\PageAwaiter', $this->pageObject->getAwaiter($node));
+    $this->assertSame($this->pageObject->builder->getAwaiter($node), $this->pageObject->getAwaiter($node));
   }
 
   /**
@@ -101,7 +113,7 @@ class BasePageObjectTest extends PageTestCase
   public function getParent_PageObjectHasParentPassed_shouldReturnParentPassedInConstructor()
   {
     $parentPageObject =  m::mock('Neducatio\TestBundle\PageObject\BasePageObject');
-    $this->pageObject = new TestableBasePage($this->page, $this->getBuilder($this->page), $parentPageObject);
+    $this->pageObject = new TestableBasePage($this->page, $this->getBuilder($this->page), $this->getHarvester(), $parentPageObject);
     $this->assertSame($parentPageObject, $this->pageObject->getParent());
   }
 
@@ -114,7 +126,7 @@ class BasePageObjectTest extends PageTestCase
   {
     $builder = $this->getBuilder($this->page);
     $builder->shouldReceive('build')->with('validName')->andReturn('PageObject')->once();
-    $this->pageObject = new TestableBasePage($this->page, $builder);
+    $this->pageObject = new TestableBasePage($this->page, $builder, $this->getHarvester());
     $this->assertSame('PageObject', $this->pageObject->buildPageObjectByName('validName'));
   }
 
@@ -125,7 +137,7 @@ class BasePageObjectTest extends PageTestCase
    */
   protected function getPageObject()
   {
-    return new TestableBasePage($this->page, $this->getBuilder($this->page));
+    return new TestableBasePage($this->page, $this->getBuilder($this->page), $this->getHarvester());
   }
   /**
    * Gets PageObject
@@ -134,6 +146,6 @@ class BasePageObjectTest extends PageTestCase
    */
   protected function getSubPageObject()
   {
-    return new TestableBasePage($this->subpage, $this->getBuilder($this->subpage));
+    return new TestableBasePage($this->subpage, $this->getBuilder($this->subpage), $this->getHarvester());
   }
 }
