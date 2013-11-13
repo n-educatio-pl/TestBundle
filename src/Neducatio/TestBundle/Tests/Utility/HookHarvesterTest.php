@@ -179,6 +179,33 @@ class HookHarvesterTest extends \PHPUnit_Framework_TestCase
     $this->assertSame(array('hook1', 'hook2'), array_keys($this->harvester->getRegister()));
   }
 
+  /**
+   * Do sth.
+   *
+   * @test
+   */
+  public function count_nonExistsingKey_shouldReturnZero()
+  {
+    $hook1 = $this->getHook('t_hook1');
+    $hook2 = $this->getHook('t_hook2');
+    $harvest = $this->getNodeElement(array($hook1, $hook2));
+    $this->harvester->registerHooks($this->getPageObject($this->getPageWithResult($harvest), '.t_someSelector'));
+    $this->assertSame(0, $this->harvester->count('t_nonhook'));
+  }
+
+  /**
+   * Do sth.
+   *
+   * @test
+   */
+  public function count_existsingKey_shouldReturnCount()
+  {
+    $hook1 = $this->getHook('t_hook1');
+    $hook2 = $this->getHook('t_hook2');
+    $harvest = $this->getNodeElement(array($hook1, $hook2));
+    $this->harvester->registerHooks($this->getPageObject($this->getPageWithResult($harvest), '.t_someSelector'));
+    $this->assertSame(1, $this->harvester->count('hook1'));
+  }
 
   /**
    * Do sth.
