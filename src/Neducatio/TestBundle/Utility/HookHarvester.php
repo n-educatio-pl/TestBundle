@@ -30,7 +30,21 @@ class HookHarvester
    */
   public function registerHooks(BasePageObject $pageObject)
   {
-    $elements = $this->getNodeElements($pageObject->getPageElement(), $pageObject->getProofSelector());
+    $this->register($pageObject, $pageObject->getProofSelector());
+  }
+  /**
+   * Registers Hooks
+   *
+   * @param BasePageObject $pageObject PageObject witch harvest
+   */
+  public function registerHooksFromPrompt(BasePageObject $pageObject)
+  {
+    $this->register($pageObject, '.ui-dialog-content');
+  }
+
+  protected function register(BasePageObject $pageObject, $proofSelector)
+  {
+    $elements = $this->getNodeElements($pageObject->getPageElement(), $proofSelector);
     foreach ($elements as $element) {
       $this->addElement($element, $pageObject);
     }
