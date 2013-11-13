@@ -68,6 +68,22 @@ class HookHarvester
   }
 
   /**
+   * Count hooks by key
+   *
+   * @param string $key Key
+   *
+   * @return int
+   */
+  public function count($key)
+  {
+    if (!array_key_exists($key, $this->register)) {
+      return 0;
+    }
+
+    return count($this->register[$key]);
+  }
+
+  /**
    * Check if hook exists
    *
    * @param string $key Key hook to check
