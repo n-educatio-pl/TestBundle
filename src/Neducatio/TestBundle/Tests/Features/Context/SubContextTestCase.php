@@ -1,6 +1,7 @@
 <?php
 namespace Neducatio\TestBundle\Tests\Features\Context;
 
+use \Neducatio\TestBundle\Features\Context\BaseSubContext;
 use Mockery as m;
 
 require_once 'PHPUnit/Framework/Assert/Functions.php';
@@ -36,6 +37,7 @@ abstract class SubContextTestCase extends \PHPUnit_Framework_TestCase
     $session->shouldReceive('getPage')->andReturn($documentPage)->byDefault();
     $registry = m::mock('stdClass');
     $registry->shouldReceive('get')->andReturn($this->pageObject)->byDefault();
+    $registry->shouldReceive('access')->with(BaseSubContext::PAGE_KEY)->andReturn($this->pageObject)->byDefault();
     $registry->shouldReceive('set')->byDefault();
     $mainContext = m::mock('Behat\Behat\Context\ExtendedContextInterface');
     $mainContext->shouldReceive('getSession')->andReturn($session)->byDefault();

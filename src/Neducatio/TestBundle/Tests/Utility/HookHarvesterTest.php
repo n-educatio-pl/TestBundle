@@ -153,6 +153,38 @@ class HookHarvesterTest extends \PHPUnit_Framework_TestCase
    *
    * @test
    * @expectedException InvalidArgumentException
+   * @expectedExceptionMessage Proof selector not found.
+   */
+  public function registerHooksFromPrompt_pageWithoutPrompt_shouldThrowException()
+  {
+    $page = m::mock('\Behat\Mink\Element\DocumentElement');
+    $page->shouldReceive('find')->with('css', '.t_someSelector')->andReturn(null);
+    $page->shouldReceive('find')->with('css', '.ui-dialog-content')->andReturn(null);
+    $this->harvester->registerHooksFromPrompt($this->getPageObject($page, '.t_someSelector'));
+  }
+  /**
+   * Do sth.
+   *
+   * @test
+   */
+  public function registerHooksFromPrompt_validHarvestWithOneHook_shouldAddOneHookToArray()
+  {
+    $hook1 = $this->getHook('t_hook1');
+    $hook2 = $this->getHook('t_hook2');
+    $harvest = $this->getNodeElement(array($hook1, $hook2));
+    $page = m::mock('\Behat\Mink\Element\DocumentElement');
+    $page->shouldReceive('find')->with('css', '.t_someSelector')->andReturn(null);
+    $page->shouldReceive('find')->with('css', '.ui-dialog-content')->andReturn($harvest);
+    $this->harvester->registerHooksFromPrompt($this->getPageObject($page, '.t_someSelector'));
+    $this->assertSame(array('hook1', 'hook2'), array_keys($this->harvester->getRegister()));
+  }
+
+
+  /**
+   * Do sth.
+   *
+   * @test
+   * @expectedException InvalidArgumentException
    * @expectedExceptionMessage Hook not_existing_key not found.
    */
   public function get_notExistingKeyIsPassed_shouldThrowAnException()
