@@ -30,15 +30,9 @@ class CommonContextShould extends SubContextTestCase
      */
     public function beAbleToLoadFixturesWhenPreparingSystem()
     {
-        $expectedFixtures = array('foo');
-        $this->context->getMainContext()->getRegistry()
-                ->shouldReceive('get')
-                ->with(BaseSubContext::FIXTURES_KEY)
-                ->andReturn($expectedFixtures);
-        $this->context->getMainContext()
-                ->shouldReceive('loadFixtures')
-                ->once()
-                ->with($expectedFixtures);
+        $fixtures = array('foo');
+        $this->prepareFixturesToBeLoaded($fixtures);
+        $this->assertFixturesLoaded($fixtures);
 
         $this->context->systemReadyToBeTested();
     }
@@ -51,4 +45,21 @@ class CommonContextShould extends SubContextTestCase
 
       return $kernel;
     }
+
+    private function prepareFixturesToBeLoaded($fixtures)
+    {
+        $this->context->getMainContext()->getRegistry()
+            ->shouldReceive('get')
+            ->with(BaseSubContext::FIXTURES_KEY)
+            ->andReturn($fixtures);
+    }
+
+    private function assertFixturesLoaded($expectedFixtures)
+    {
+        $this->context->getMainContext()
+            ->shouldReceive('loadFixtures')
+            ->once()
+            ->with($expectedFixtures);
+    }
+
 }
