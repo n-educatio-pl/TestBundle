@@ -92,6 +92,7 @@ abstract class BaseSubContext extends BehatContext implements KernelAwareInterfa
    * Get page object from registry
    *
    * @return PageObject
+   * @deprecated
    */
   public function getPage()
   {
@@ -102,11 +103,22 @@ abstract class BaseSubContext extends BehatContext implements KernelAwareInterfa
    * Set page object
    *
    * @param type $pageObjectName Page object
+   *
+   * @deprecated
    */
   public function setPage($pageObjectName)
   {
-    $this->getRegistry()->set(self::PAGE_KEY, $this->builder->build($pageObjectName, $this->getBrowserPage()));
+      $this->setPageByName($pageObjectName);
   }
+    /**
+     * Set page object
+     *
+     * @param type $pageObjectName Page object
+     */
+    public function setPageByName($pageObjectName)
+    {
+        $this->getRegistry()->set(self::PAGE_KEY, $this->builder->build($pageObjectName, $this->getBrowserPage()));
+    }
   /**
    * Retrieves or sets page object in registry. If no value passed only gets page object from registry.
    *
