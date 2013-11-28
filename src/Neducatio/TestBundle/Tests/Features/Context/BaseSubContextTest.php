@@ -69,19 +69,6 @@ class BaseSubContextTest extends SubContextTestCase
     $this->feature->getMainContext()->getRegistry()->shouldReceive('get')->andReturn($pageObject);
     $this->assertSame($pageObject, $this->feature->getPage());
   }
-
-  /**
-   * set Page test
-   *
-   * @test
-   */
-  public function setPage_noMainContextSetted_shouldThrowException()
-  {
-    $this->builder->shouldReceive('build');
-    $parent = $this->getParentContextMock();
-    $this->feature->setParentContext($parent);
-    $this->feature->setPage('page');
-  }
   /**
    * access page test
    *
