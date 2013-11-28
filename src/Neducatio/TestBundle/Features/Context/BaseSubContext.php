@@ -121,11 +121,11 @@ abstract class BaseSubContext extends BehatContext
   /**
    * Retrieves or sets page object in registry. If no value passed only gets page object from registry.
    *
-   * @param \Neducatio\TestBundle\PageObject\BasePageObject $pageObject Page object to set (optional)
+   * @param mixed $pageObject Page object to set (optional)
    *
    * @return \Neducatio\TestBundle\PageObject\BasePageObject
    */
-  public function page(\Neducatio\TestBundle\PageObject\BasePageObject $pageObject = null)
+  public function page($pageObject = null)
   {
     if (func_num_args() > 0) {
       return $this->getRegistry()->access(self::PAGE_KEY, $pageObject);
