@@ -218,25 +218,42 @@ class BaseSubContextTest extends SubContextTestCase
     $this->feature->getRegistry();
   }
 
-    /**
-     * Do sth.
-     *
-     * @test
-     * @group wip
-     */
-    public function setPageByName()
-    {
-        $this->feature->setParentContext($this->getParentContextMock());
-        $pageObjectClass = 'somyPageObjectClass';
-        $browserPage = m::mock('Behat\Mink\Element\TraversableElement');
-        $this->feature->getMainContext()->getSession()->shouldReceive('getPage')->andReturn($browserPage);
-        $expectedPageObject = m::mock('\Neducatio\TestBundle\PageObject\BasePageObject');
-        $this->builder->shouldReceive('build')->with($pageObjectClass, $browserPage)->andReturn($expectedPageObject);
+  /**
+   * Do sth.
+   *
+   * @test
+   */
+  public function setPageByName_shouldBuildPageObjectAndSetItInRegistry()
+  {
+      $pageObjectClass = 'somePageObjectClass';
 
-        $this->feature->getMainContext()->getRegistry()->shouldReceive('set')->once()->with(TestableBaseSubContext::PAGE_KEY, $expectedPageObject);
+      $this->assertPageObjectBuiltAndSet($pageObjectClass);
+      $this->feature->setPageByName($pageObjectClass);
+  }
+  /**
+   * setPage is deprecated - remove when all usages will be replaced
+   *
+   * @test
+   */
+  public function setPage_shouldBuildPageObjectAndSetItInRegistry()
+  {
+      $pageObjectClass = 'someOtherPageObjectClass';
 
-        $this->feature->setPageByName($pageObjectClass);
-    }
+      $this->assertPageObjectBuiltAndSet($pageObjectClass);
+      $this->feature->setPage($pageObjectClass);
+  }
+
+  private function assertPageObjectBuiltAndSet ($pageObjectClass)
+  {
+
+    $this->feature->setParentContext($this->getParentContextMock());
+    $browserPage = m::mock('Behat\Mink\Element\TraversableElement');
+    $this->feature->getMainContext()->getSession()->shouldReceive('getPage')->andReturn($browserPage);
+    $expectedPageObject = m::mock('\Neducatio\TestBundle\PageObject\BasePageObject');
+    $this->builder->shouldReceive('build')->with($pageObjectClass, $browserPage)->andReturn($expectedPageObject);
+
+    $this->feature->getMainContext()->getRegistry()->shouldReceive('set')->once()->with(TestableBaseSubContext::PAGE_KEY, $expectedPageObject);
+  }
 
 
   private function getKernelMock()
