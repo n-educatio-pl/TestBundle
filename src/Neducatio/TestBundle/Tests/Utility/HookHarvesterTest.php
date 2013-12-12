@@ -283,6 +283,46 @@ class HookHarvesterTest extends \PHPUnit_Framework_TestCase
    * Do sth.
    *
    * @test
+   *
+   * @expectedException \InvalidArgumentException
+   * @expectedExceptionMessage Hook hook1 not found.
+   */
+  public function getAllByKey_keyWhereIsNoNodes_shouldThrowsInvalidArgumentException()
+  {
+      $this->harvester->getAllByKey('hook1');
+  }
+
+  /**
+   * Do sth.
+   *
+   * @test
+   */
+  public function getAllByKey_keyWhereIsOneNode_shouldReturnArrayWithNode()
+  {
+    $hook = $this->getHook('t_hook1');
+    $harvest = $this->getNodeElement(array($hook));
+    $this->harvester->registerHooks($this->getPageObject($this->getPageWithResult($harvest), '.t_someSelector'));
+    $this->assertSame(array($hook), $this->harvester->getAllByKey('hook1'));
+  }
+
+  /**
+   * Do sth.
+   *
+   * @test
+   */
+  public function getAllByKey_keyWhereAreTwoNodes_shouldReturnArrayWithNodes()
+  {
+      $hook1 = $this->getHook('t_hook1');
+      $hook2 = $this->getHook('t_hook1');
+      $harvest = $this->getNodeElement(array($hook1, $hook2));
+      $this->harvester->registerHooks($this->getPageObject($this->getPageWithResult($harvest), '.t_someSelector'));
+      $this->assertSame(array($hook1, $hook2), $this->harvester->getAllByKey('hook1'));
+  }
+
+  /**
+   * Do sth.
+   *
+   * @test
    */
   public function has_notExistingKeyIsPassed_shouldReturnFalse()
   {

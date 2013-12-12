@@ -81,6 +81,18 @@ abstract class BasePageObject
   }
 
   /**
+   * Gets all hooks by given key
+   *
+   * @param string $key Hook key
+   *
+   * @return array
+   */
+  public function getAllByKey($key)
+  {
+    return $this->harvester->getAllByKey($key);
+  }
+
+  /**
    * Check if hook exists
    *
    * @param string $key Key hook to check
