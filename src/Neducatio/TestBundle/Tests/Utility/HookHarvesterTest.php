@@ -14,12 +14,14 @@ class HookHarvesterTest extends \PHPUnit_Framework_TestCase
 {
   private $builder;
   private $harvester;
+  private $awaiter;
   /**
    * Do sth.
    */
   public function setUp()
   {
-    $this->builder = m::mock('Neducatio\TestBundle\PageObject\PageObjectBuilder');
+    $this->awaiter = m::mock('\Neducatio\TestBundle\Utility\Awaiter\PageAwaiter')->shouldIgnoreMissing();
+    $this->builder = m::mock('Neducatio\TestBundle\PageObject\PageObjectBuilder', array('getAwaiter'=> $this->awaiter));
     $this->harvester = new HookHarvester($this->builder);
   }
 
@@ -54,13 +56,16 @@ class HookHarvesterTest extends \PHPUnit_Framework_TestCase
   /**
    * Do sth.
    *
+   * @group fail
    * @test
-   * @expectedException InvalidArgumentException
-   * @expectedExceptionMessage Proof selector not found.
+   * @expectedException \Neducatio\TestBundle\Utility\Awaiter\ConditionNotFulfilledException
    */
   public function registerHooks_pageWithoutGivenProofSelector_shouldThrowException()
   {
-    $this->harvester->registerHooks($this->getPageObject($this->getPageWithResult(), '.t_someSelector'));
+    $selectorNotOnPage = '.t_someSelector';
+
+    $this->awaiter->shouldReceive('waitUntilVisible')->with($selectorNotOnPage)->andThrow('\Neducatio\TestBundle\Utility\Awaiter\ConditionNotFulfilledException');
+    $this->harvester->registerHooks($this->getPageObject($this->getPageWithResult(), $selectorNotOnPage));
   }
 
   /**
@@ -152,14 +157,14 @@ class HookHarvesterTest extends \PHPUnit_Framework_TestCase
    * Do sth.
    *
    * @test
-   * @expectedException InvalidArgumentException
-   * @expectedExceptionMessage Proof selector not found.
+   * @expectedException \Neducatio\TestBundle\Utility\Awaiter\ConditionNotFulfilledException
    */
   public function registerHooksFromPrompt_pageWithoutPrompt_shouldThrowException()
   {
     $page = m::mock('\Behat\Mink\Element\DocumentElement');
     $page->shouldReceive('find')->with('css', '.t_someSelector')->andReturn(null);
     $page->shouldReceive('find')->with('css', '.ui-dialog-content')->andReturn(null);
+    $this->awaiter->shouldReceive('waitUntilVisible')->with('.ui-dialog-content')->andThrow('\Neducatio\TestBundle\Utility\Awaiter\ConditionNotFulfilledException');
     $this->harvester->registerHooksFromPrompt($this->getPageObject($page, '.t_someSelector'));
   }
   /**

@@ -123,12 +123,9 @@ class HookHarvester
    */
   private function retrieveHarvest(TraversableElement $page, $proofSelector)
   {
-    $harvest = $page->find('css', $proofSelector);
-    if ($harvest === null) {
-      throw new \InvalidArgumentException('Proof selector not found.');
-    }
+    $this->builder->getAwaiter($page)->waitUntilVisible($proofSelector);
 
-    return $harvest;
+    return $page->find('css', $proofSelector);
   }
 
   /**

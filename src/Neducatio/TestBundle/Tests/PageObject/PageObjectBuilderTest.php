@@ -37,7 +37,7 @@ class PageObjectBuilderTest extends \PHPUnit_Framework_TestCase
    */
   public function build_validPageNameAndDocumentElementArePassed_shouldReturnInstanceOfGivenPage()
   {
-    $builder = $this->getBuilder();
+    $builder = $this->getBuilder(true);
     $documentElement = $this->getPage();
     $basePage = $builder->build(TestableBasePage::NAME, $documentElement);
     $this->assertInstanceOf('Neducatio\TestBundle\Tests\PageObject\TestableBasePage', $basePage);
@@ -57,6 +57,7 @@ class PageObjectBuilderTest extends \PHPUnit_Framework_TestCase
     $context->shouldReceive('getSession')->andReturn($session);
 
     $builder = new PageObjectBuilder($context);
+    $builder->setAwaiter(m::mock('\Neducatio\TestBundle\Utility\Awaiter\PageAwaiter')->shouldIgnoreMissing());
     $basePage = $builder->build(TestableBasePage::NAME);
     $this->assertInstanceOf('Neducatio\TestBundle\Tests\PageObject\TestableBasePage', $basePage);
   }
@@ -134,11 +135,18 @@ class PageObjectBuilderTest extends \PHPUnit_Framework_TestCase
   /**
    * Gets Builder
    *
+   * @param bool $mockAwaiter True - awaiter will be mocked, false - default real object will be used
+   *
    * @return PageObjectBuilder
    */
-  private function getBuilder()
+  private function getBuilder($mockAwaiter = false)
   {
-    return new PageObjectBuilder($this->getBaseFeatureContext());
+    $builder = new PageObjectBuilder($this->getBaseFeatureContext());
+    if ($mockAwaiter) {
+        $builder->setAwaiter(m::mock('Neducatio\TestBundle\Utility\Awaiter\PageAwaiter', array('waitUntilVisible' => true))->shouldIgnoreMissing());
+    }
+
+    return $builder;
   }
 
   private function getBaseFeatureContext()
