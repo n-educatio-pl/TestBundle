@@ -97,4 +97,14 @@ class PageObjectBuilder
 
     return $this->awaiter;
   }
+
+  /**
+   * Setter
+   *
+   * @param PageAwaiter $awaiter Awaiter
+   */
+  public function setAwaiter(PageAwaiter $awaiter)
+  {
+      $this->awaiter = $awaiter;
+  }
 }

@@ -14,12 +14,13 @@ abstract class AwaiterBase
     /**
      * Wait until condition is fulfilled
      *
-     * @param Callable $condition condition callable
-     * @param mixed    $result    condition needed result
+     * @param Callable $condition        condition callable
+     * @param mixed    $result           condition needed result
+     * @param string   $exceptionMessage Message will be shown in exception when condition not fulfilled
      *
      * @throws ConditionNotFulfilledException
      */
-    public function waitUntil($condition, $result)
+    public function waitUntil($condition, $result, $exceptionMessage = '')
     {
         $before = microtime(true);
         while ($result !== $condition()) {
@@ -27,7 +28,7 @@ abstract class AwaiterBase
             usleep($this->waitDistance);
             continue;
           }
-          throw new ConditionNotFulfilledException();
+          throw new ConditionNotFulfilledException($exceptionMessage);
         }
         usleep($this->minTime);
     }
@@ -35,20 +36,22 @@ abstract class AwaiterBase
     /**
      * Wait until true
      *
-     * @param Callable $condition condition callable
+     * @param Callable $condition        condition callable
+     * @param string   $exceptionMessage Message will be shown in exception when condition not fulfilled
      */
-    public function waitUntilTrue($condition)
+    public function waitUntilTrue($condition, $exceptionMessage = '')
     {
-      $this->waitUntil($condition, true);
+      $this->waitUntil($condition, true, $exceptionMessage);
     }
 
     /**
      * Wait until false
      *
-     * @param Callable $condition condition callable
+     * @param Callable $condition        condition callable
+     * @param string   $exceptionMessage Message will be shown in exception when condition not fulfilled
      */
-    public function waitUntilFalse($condition)
+    public function waitUntilFalse($condition, $exceptionMessage = '')
     {
-      $this->waitUntil($condition, false);
+      $this->waitUntil($condition, false, $exceptionMessage);
     }
 }
