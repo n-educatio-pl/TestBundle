@@ -47,7 +47,8 @@ class PageAwaiter extends AwaiterBase
     $page = $this->page;
     $this->waitUntilTrue(function() use ($page, $selector, $type) {
       return $page->find($type, $selector) !== null && $page->find($type, $selector)->isVisible();
-    });
+    },
+        'Element not visible after timeout: ' . $selector);
   }
 
   /**
@@ -68,6 +69,7 @@ class PageAwaiter extends AwaiterBase
     $page = $this->page;
     $this->waitUntilFalse(function() use ($page, $selector, $type) {
       return $page->has($type, $selector);
-    });
+    },
+        'Element still visible after timeout: ' . $selector);
   }
 }
