@@ -123,7 +123,7 @@ class HookHarvester
    */
   private function retrieveHarvest(TraversableElement $page, $proofSelector)
   {
-    $this->builder->getAwaiter($page)->waitUntilVisible($proofSelector);
+    $this->builder->getAwaiter($page)->waitUntilVisible($proofSelector, 'css', true);
 
     return $page->find('css', $proofSelector);
   }

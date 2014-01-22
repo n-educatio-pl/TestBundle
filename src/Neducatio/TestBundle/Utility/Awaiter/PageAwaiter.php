@@ -32,20 +32,25 @@ class PageAwaiter extends AwaiterBase
   /**
    * Wait until element will be visible on page
    *
-   * @param string $selector Element selector
-   * @param string $type     Selector type
+   * @param string  $selector  Element selector
+   * @param string  $type      Selector type
+   * @param boolean $isVisible Control parameter
    *
    * @return null (closure returns bool, not this function)
    *
    * @throws TraversableElementNotSetException
    */
-  public function waitUntilVisible($selector, $type = 'css')
+  public function waitUntilVisible($selector, $type = 'css', $isVisible = false)
   {
     if ($this->page === null) {
       throw new TraversableElementNotSetException();
     }
     $page = $this->page;
-    $this->waitUntilTrue(function() use ($page, $selector, $type) {
+    $this->waitUntilTrue(function() use ($page, $selector, $type, $isVisible) {
+      if ($isVisible) {
+
+        return $page->find($type, $selector) !== null;
+      }
       return $page->find($type, $selector) !== null && $page->find($type, $selector)->isVisible();
     },
         'Element not visible after timeout: ' . $selector);
