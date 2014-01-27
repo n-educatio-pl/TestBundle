@@ -1,19 +1,7 @@
 {
-    "repositories": [
-        {
-            "type": "package",
-            "package": {
-                "name": "zerkalica/phpcs",
-                "version": "dev-master",
-                "source": {
-                    "type": "git",
-                    "url": "https://github.com/sfraszczak-neducatio/PHP_CodeSniffer.git",
-                    "reference": "master"
-                }
-            }
-        }
-    ],
     "name": "n-educatio/testbundle",
+    "description": "Framework for Specification by Example and e2e testing",
+    "homepage": "https://github.com/n-educatio/TestBundle",
     "authors": [
         {
             "name": "n-educatio",
@@ -43,5 +31,22 @@
             "Neducatio\\TestBundle\\": "src/",
             "Acme\\AnimalBundle\\": "testapp/"
         }
-    }
+    },
+
+
+
+    "repositories": [
+        {
+            "type": "package",
+            "package": {
+                "name": "zerkalica/phpcs",
+                "version": "dev-master",
+                "source": {
+                    "type": "git",
+                    "url": "https://github.com/sfraszczak-neducatio/PHP_CodeSniffer.git",
+                    "reference": "master"
+                }
+            }
+        }
+    ]
 }
