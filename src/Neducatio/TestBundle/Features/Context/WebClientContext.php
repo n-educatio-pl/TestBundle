@@ -2,8 +2,6 @@
 
 namespace Neducatio\TestBundle\Features\Context;
 
-use Neducatio\TestBundle\Utility\WebClientRetriever;
-
 /**
  * Web Client Context
  */
@@ -16,12 +14,7 @@ class WebClientContext extends BaseSubContext
       return $this->getRegistry()->get('client');
     }
 
-    return $this->getRegistry()->access('client', $this->getWebTestClient()->setClient($reference));
-  }
-
-  private function getWebTestClient()
-  {
-    return new WebClientRetriever($this->getContainer());
+    return $this->getRegistry()->access('client', $this->getContainer()->get('neducatio_test.web_client')->setClient($reference));
   }
 
   protected function getEntityManager()

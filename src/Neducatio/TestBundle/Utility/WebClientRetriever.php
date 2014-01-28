@@ -38,11 +38,30 @@ class WebClientRetriever
   private function logInUser($reference)
   {
     $client  = $this->container->get('test.client');
-    $crawler = $client->request('GET', '/login');
-    $form    = $crawler->selectButton('_submit')->form();
+    $parameters = $this->getLoginFormParameters();
+    $crawler = $client->request('GET', $parameters['form_url']);
+    $form    = $crawler->selectButton($parameters['submit_button_name'])->form();
 
-    $client->submit($form, array('_username' => $reference->getUsername(), '_password' => 'test'));
+    $client->submit($form, array($parameters['username_field_name'] => $reference->getUsername(), $parameters['password_field_name'] => 'test'));
 
     return $client;
+  }
+
+  private function getLoginFormParameters()
+  {
+    if (!$this->container->hasParameter('neducatio_test.web_client_login_form_params')) {
+
+      throw new LoginFormParameterNotFoundException('Login form parameters not defined!');
+    }
+    $parameters = $this->container->getParameter('neducatio_test.web_client_login_form_params');
+    $paramNames = array('form_url', 'username_field_name', 'password_field_name', 'submit_button_name');
+    foreach ($paramNames as $paramName) {
+      if (!isset($parameters[$paramName])) {
+
+        throw new LoginFormParameterNotFoundException('Login form parameter: "'.$paramName.'" not defined!');
+      }
+    }
+
+    return $parameters;
   }
 }

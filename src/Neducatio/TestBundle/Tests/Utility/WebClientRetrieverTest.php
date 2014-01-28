@@ -17,6 +17,17 @@ class WebClientRetrieverTest extends \PHPUnit_Framework_TestCase
   private $userReference;
   private $clientRetriever;
   private $form;
+  private static $validServiceParams = array(
+      'form_url' => '/login',
+      'username_field_name' => '_username',
+      'password_field_name' => '_password',
+      'submit_button_name' => '_submit'
+  );
+  private static $invalidServiceParams = array(
+      'form_url' => '/login',
+      'username_field_name' => '_username',
+      'submit_button_name' => '_submit'
+  );
 
   const USER_NAME = 'barbra.rookie@example.com';
 
@@ -35,11 +46,40 @@ class WebClientRetrieverTest extends \PHPUnit_Framework_TestCase
    *
    * @test
    */
-  public function shouldSetClient()
+  public function shouldSetClientWhenValidServiceParamsGiven()
   {
+    $this->container->shouldReceive('hasParameter')->with('neducatio_test.web_client_login_form_params')->andReturn(true);
+    $this->container->shouldReceive('getParameter')->with('neducatio_test.web_client_login_form_params')->andReturn(self::$validServiceParams);
     $result = $this->clientRetriever->setClient($this->userReference);
 
     $this->assertEquals($this->client, $result);
+  }
+
+  /**
+   * Test for setClient
+   *
+   * @test
+   */
+  public function setClient_shouldThrowExceptionWhenInvalidServiceParamsGiven()
+  {
+    $this->container->shouldReceive('hasParameter')->with('neducatio_test.web_client_login_form_params')->andReturn(true);
+    $this->container->shouldReceive('getParameter')->with('neducatio_test.web_client_login_form_params')->andReturn(self::$invalidServiceParams);
+    $this->setExpectedException('\Neducatio\TestBundle\Utility\LoginFormParameterNotFoundException');
+
+    $this->clientRetriever->setClient($this->userReference);
+  }
+
+  /**
+   * Test for setClient
+   *
+   * @test
+   */
+  public function setClient_shouldThrowExceptionWhenServiceNotConfigured()
+  {
+    $this->container->shouldReceive('hasParameter')->with('neducatio_test.web_client_login_form_params')->andReturn(false);
+    $this->setExpectedException('\Neducatio\TestBundle\Utility\LoginFormParameterNotFoundException');
+
+    $this->clientRetriever->setClient($this->userReference);
   }
 
   /**
