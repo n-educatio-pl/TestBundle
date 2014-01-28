@@ -7,14 +7,17 @@ namespace Neducatio\TestBundle\Features\Context;
  */
 class WebClientContext extends BaseSubContext
 {
+  protected $client;
+
   protected function client($reference = null)
   {
     if ($reference === null) {
-
-      return $this->getRegistry()->get('client');
+      $this->client = $this->getRegistry()->get('client');
+    } else {
+      $this->client = $this->getRegistry()->access('client', $this->getContainer()->get('neducatio_test.web_client')->setClient($reference));
     }
 
-    return $this->getRegistry()->access('client', $this->getContainer()->get('neducatio_test.web_client')->setClient($reference));
+    return $this->client;
   }
 
   protected function getEntityManager()
