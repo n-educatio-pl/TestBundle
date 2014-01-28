@@ -56,7 +56,6 @@ class HookHarvesterTest extends \PHPUnit_Framework_TestCase
   /**
    * Do sth.
    *
-   * @group fail
    * @test
    * @expectedException \Neducatio\TestBundle\Utility\Awaiter\ConditionNotFulfilledException
    */
@@ -64,7 +63,7 @@ class HookHarvesterTest extends \PHPUnit_Framework_TestCase
   {
     $selectorNotOnPage = '.t_someSelector';
 
-    $this->awaiter->shouldReceive('waitUntilVisible')->with($selectorNotOnPage)->andThrow('\Neducatio\TestBundle\Utility\Awaiter\ConditionNotFulfilledException');
+    $this->awaiter->shouldReceive('waitUntilVisible')->with($selectorNotOnPage, m::any(), m::any())->andThrow('\Neducatio\TestBundle\Utility\Awaiter\ConditionNotFulfilledException');
     $this->harvester->registerHooks($this->getPageObject($this->getPageWithResult(), $selectorNotOnPage));
   }
 
@@ -164,7 +163,7 @@ class HookHarvesterTest extends \PHPUnit_Framework_TestCase
     $page = m::mock('\Behat\Mink\Element\DocumentElement');
     $page->shouldReceive('find')->with('css', '.t_someSelector')->andReturn(null);
     $page->shouldReceive('find')->with('css', '.ui-dialog-content')->andReturn(null);
-    $this->awaiter->shouldReceive('waitUntilVisible')->with('.ui-dialog-content')->andThrow('\Neducatio\TestBundle\Utility\Awaiter\ConditionNotFulfilledException');
+    $this->awaiter->shouldReceive('waitUntilVisible')->with('.ui-dialog-content', m::any(), m::any())->andThrow('\Neducatio\TestBundle\Utility\Awaiter\ConditionNotFulfilledException');
     $this->harvester->registerHooksFromPrompt($this->getPageObject($page, '.t_someSelector'));
   }
   /**
