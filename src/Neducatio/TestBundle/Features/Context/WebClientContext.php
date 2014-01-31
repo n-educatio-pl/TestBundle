@@ -9,12 +9,12 @@ class WebClientContext extends BaseSubContext
 {
   protected $client;
 
-  protected function client($reference = null)
+  protected function client($reference = null, $followRedirects = true)
   {
     if ($reference === null) {
       $this->client = $this->getRegistry()->get('client');
     } else {
-      $this->client = $this->getRegistry()->access('client', $this->getContainer()->get('neducatio_test.web_client')->setClient($reference));
+      $this->client = $this->getRegistry()->access('client', $this->getContainer()->get('neducatio_test.web_client')->setClient($reference, $followRedirects));
     }
 
     return $this->client;

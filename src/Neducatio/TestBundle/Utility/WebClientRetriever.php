@@ -26,18 +26,22 @@ class WebClientRetriever
   /**
    * Gets logged in browser client
    *
-   * @param User $reference User reference
+   * @param User    $reference       User reference
+   * @param boolean $followRedirects Flag that makes client do redirects automatically
    *
    * @return Client
    */
-  public function setClient($reference)
+  public function setClient($reference, $followRedirects)
   {
-    return $this->logInUser($reference);
+    return $this->logInUser($reference, $followRedirects);
   }
 
-  private function logInUser($reference)
+  private function logInUser($reference, $followRedirects)
   {
     $client  = $this->container->get('test.client');
+    if ($followRedirects) {
+      $client->followRedirects();
+    }
     $parameters = $this->getLoginFormParameters();
     $crawler = $client->request('GET', $parameters['form_url']);
     $form    = $crawler->selectButton($parameters['submit_button_name'])->form();
