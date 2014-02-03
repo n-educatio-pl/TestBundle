@@ -33,13 +33,13 @@
 
   <!-- VENDORS -->
   <target name="installvendors" description="Composer update dependencies">
-    <exec executable="/usr/bin/php">
+    <exec executable="php">
       <arg value="composer.phar" />
       <arg value="install" />
     </exec>
   </target>
   <target name="installvendors-dev" description="Composer update dependencies with require-dev">
-    <exec executable="/usr/bin/php">
+    <exec executable="php">
       <arg value="composer.phar" />
       <arg value="install" />
       <arg value="--dev" />
