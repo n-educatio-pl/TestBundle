@@ -51,7 +51,7 @@ class FixtureLoaderTest extends \PHPUnit_Framework_TestCase
   public function load_emptyArrayPassed_shouldEraseReferencesAndExecuteFixtures()
   {
     $this->invoker->shouldReceive('getFixtureExecutor')->andReturn($this->getFixtureExecutor())->once();
-    $this->invoker->shouldReceive('getExecutor')->andReturn($this->getExecutor())->once();
+    $this->invoker->shouldReceive('getExecutor')->andReturn($this->getExecutor('someKey', 'someReference'))->once();
     $this->invoker->shouldReceive('getEntityManager')->andReturn($this->getEntityManager())->once();
 
     $this->getFixtureLoader()->load();
@@ -64,9 +64,23 @@ class FixtureLoaderTest extends \PHPUnit_Framework_TestCase
    */
   public function getReference_someReferenceKey_shouldCallForReferenceExecutor()
   {
-    $this->invoker->shouldReceive('getExecutor')->andReturn($this->getExecutor('referenceObject'))->once();
+    $this->invoker->shouldReceive('getExecutor')->andReturn($this->getExecutor('referenceKey', 'referenceObject'));
     $reference = $this->getFixtureLoader()->getReference('referenceKey');
     $this->assertSame('referenceObject', $reference);
+  }
+
+  /**
+   * Do sth.
+   *
+   * @test
+   *
+   * @expectedException \InvalidArgumentException
+   * @expectedExceptionMessage does not exist
+   */
+  public function getReference_referenceKeyDoesNOTExist_shouldThrowException()
+  {
+    $this->invoker->shouldReceive('getExecutor')->andReturn($this->getExecutor('referenceKey', 'referenceObject'));
+    $this->getFixtureLoader()->getReference('nonExistingKey');
   }
 
   private function getComponentBuilder()
@@ -87,10 +101,15 @@ class FixtureLoaderTest extends \PHPUnit_Framework_TestCase
     return $uniqueDependencyResolver;
   }
 
-  private function getExecutor($reference = null)
+  private function getExecutor($key, $reference)
   {
     $referenceRepository = m::mock('\stdClass');
-    $referenceRepository->shouldReceive('getReference')->andReturn($reference);
+    $referenceRepository->shouldReceive('hasReference')->byDefault();
+    $referenceRepository->shouldReceive('hasReference')->with('nonExistingKey')->andReturn(false);
+    $referenceRepository->shouldReceive('hasReference')->with($key)->andReturn(true);
+    $referenceRepository->shouldReceive('getReference')->with($key)->andReturn($reference);
+    $referenceRepository->shouldReceive('getReference')->with('nonExistingKey')->never();
+
 
     $executor = m::mock('Doctrine\Common\DataFixtures\Executor\ORMExecutor');
     $executor->shouldReceive('setReferenceRepository');

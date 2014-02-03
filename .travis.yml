@@ -1,0 +1,12 @@
+# see http://about.travis-ci.org/docs/user/languages/php/ for more hints
+language: php
+
+# list any PHP version you want to test against
+php:
+  - 5.3
+
+before_script:
+  - psql -c 'CREATE DATABASE neducatio_testbundle;' -U postgres
+
+# omitting "script:" will default to phpunit
+script: ant ci

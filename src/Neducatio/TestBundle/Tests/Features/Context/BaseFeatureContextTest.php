@@ -62,20 +62,6 @@ class BaseFeatureContextTest extends \PHPUnit_Framework_TestCase
   }
 
   /**
-   * Do sth.
-   *
-   * @group integration
-   * @test
-   */
-  public function loadFixtures_someFixturesPassed_shouldThrowException()
-  {
-    $fixtures = array(
-      \Neducatio\TestBundle\Tests\DataFixtures\FakeFixture\TestableFixture::NAME,
-    );
-    $this->feature->loadFixtures($fixtures);
-  }
-
-  /**
    * @test
    *
    * @expectedException RuntimeException
@@ -89,16 +75,17 @@ class BaseFeatureContextTest extends \PHPUnit_Framework_TestCase
   /**
    * @test
    *
-   * @expectedException PHPUnit_Framework_Error_Notice
-   * @expectedExceptionMessage Undefined index: ref
    */
   public function getReference_fixtureLoaded_shouldReturnReferenceToThatFixture()
   {
     $fixtures = array(
       \Neducatio\TestBundle\Tests\DataFixtures\FakeFixture\TestableFixture::NAME,
     );
+    $this->configureDependencies();
+    $this->feature->dependencies->getExecutor()->getReferenceRepository()->shouldReceive('hasReference')->with('foo')->andReturn(true);
+    $this->feature->dependencies->getExecutor()->getReferenceRepository()->shouldReceive('getReference')->with('foo')->andReturn('bar');
     $this->feature->loadFixtures($fixtures);
-    $this->feature->getReference('ref');
+    $this->assertEquals('bar', $this->feature->getReference('foo'));
   }
 
   /**
@@ -129,5 +116,27 @@ class BaseFeatureContextTest extends \PHPUnit_Framework_TestCase
     $kernel->shouldReceive('getContainer')->andReturn($container);
 
     return $kernel;
+  }
+
+  protected function configureDependencies()
+  {
+    $bondingComponent = m::mock('Neducatio\TestBundle\DataFixtures\BondingComponent');
+    $componentBuilder = m::mock('Neducatio\TestBundle\DataFixtures\ComponentBuilder');
+    $componentBuilder->shouldReceive('buildFromArray')->andReturn($bondingComponent);
+    $this->feature->dependencies = m::mock('Neducatio\TestBundle\DataFixtures\FixtureDependencyInvoker');
+    $this->feature->dependencies->shouldReceive('getComponentBuilder')->andReturn($componentBuilder);
+    $em = m::mock('Doctrine\ORM\EntityManager');
+    $this->feature->dependencies->shouldReceive('getEntityManager')->andReturn($em);
+    $fixtureExecutor = m::mock('Neducatio\TestBundle\DataFixtures\FixtureExecutor');
+    $fixtureExecutor->shouldReceive('execute')->byDefault();
+    $this->feature->dependencies->shouldReceive('getFixtureExecutor')->andReturn($fixtureExecutor);
+    $executor = m::mock('Doctrine\Common\DataFixtures\Executor\ORMExecutor');
+    $executor->shouldReceive('setReferenceRepository')->byDefault();
+    $referenceRepository = m::mock('Doctrine\Common\DataFixtures\ReferenceRepository');
+    $executor->shouldReceive('getReferenceRepository')->andReturn($referenceRepository);
+    $this->feature->dependencies->shouldReceive('getExecutor')->andReturn($executor);
+    $uniqueDependencyResolver = m::mock('Neducatio\TestBundle\DataFixtures\UniqueDependencyResolver');
+    $uniqueDependencyResolver->shouldReceive('resolve')->andReturn(array());
+    $this->feature->dependencies->shouldReceive('getUniqueDependencyResolver')->andReturn($uniqueDependencyResolver);
   }
 }
