@@ -65,6 +65,7 @@ class BaseFeatureContextTest extends \PHPUnit_Framework_TestCase
    * Do sth.
    *
    * @group integration
+   * @group db
    * @test
    */
   public function loadFixtures_someFixturesPassed_shouldThrowException()
@@ -88,6 +89,8 @@ class BaseFeatureContextTest extends \PHPUnit_Framework_TestCase
 
   /**
    * @test
+   *
+   * @group db
    *
    * @expectedException PHPUnit_Framework_Error_Notice
    * @expectedExceptionMessage Undefined index: ref
