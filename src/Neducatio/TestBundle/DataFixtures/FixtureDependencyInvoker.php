@@ -6,6 +6,7 @@ use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Neducatio\TestBundle\DataFixtures\FixtureExecutor;
 use Neducatio\TestBundle\DataFixtures\ComponentBuilder;
 use Neducatio\TestBundle\DataFixtures\UniqueDependencyResolver;
+use Symfony\Component\HttpKernel\Kernel;
 
 /**
  * Fixture Dependency Invoker
@@ -21,9 +22,9 @@ class FixtureDependencyInvoker
   /**
    * Constructor
    *
-   * @param AppKernel $kernel Symfony kernel
+   * @param Kernel $kernel Symfony kernel
    */
-  public function __construct(\AppKernel $kernel = null)
+  public function __construct(Kernel $kernel = null)
   {
     if ($kernel === null) {
       $kernel = $this->createKernel();
