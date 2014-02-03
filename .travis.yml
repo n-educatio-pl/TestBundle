@@ -6,4 +6,4 @@ php:
   - 5.3
 
 # omitting "script:" will default to phpunit
-script: ant
+script: ant ci
