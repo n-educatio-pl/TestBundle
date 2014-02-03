@@ -41,6 +41,10 @@ class FixtureLoader
    */
   public function getReference($refName)
   {
+    if (!$this->invoker->getExecutor()->getReferenceRepository()->hasReference($refName)) {
+      throw new \InvalidArgumentException("Reference {$refName} does not exist.");
+    }
+
     return $this->invoker->getExecutor()->getReferenceRepository()->getReference($refName);
   }
 
