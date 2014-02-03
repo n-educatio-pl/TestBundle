@@ -50,7 +50,7 @@ class WebClientRetrieverTest extends \PHPUnit_Framework_TestCase
   {
     $this->container->shouldReceive('hasParameter')->with('neducatio_test.web_client_login_form_params')->andReturn(true);
     $this->container->shouldReceive('getParameter')->with('neducatio_test.web_client_login_form_params')->andReturn(self::$validServiceParams);
-    $result = $this->clientRetriever->setClient($this->userReference);
+    $result = $this->clientRetriever->setClient($this->userReference, false);
 
     $this->assertEquals($this->client, $result);
   }
@@ -66,7 +66,7 @@ class WebClientRetrieverTest extends \PHPUnit_Framework_TestCase
     $this->container->shouldReceive('getParameter')->with('neducatio_test.web_client_login_form_params')->andReturn(self::$invalidServiceParams);
     $this->setExpectedException('\Neducatio\TestBundle\Utility\LoginFormParameterNotFoundException');
 
-    $this->clientRetriever->setClient($this->userReference);
+    $this->clientRetriever->setClient($this->userReference, false);
   }
 
   /**
@@ -79,7 +79,7 @@ class WebClientRetrieverTest extends \PHPUnit_Framework_TestCase
     $this->container->shouldReceive('hasParameter')->with('neducatio_test.web_client_login_form_params')->andReturn(false);
     $this->setExpectedException('\Neducatio\TestBundle\Utility\LoginFormParameterNotFoundException');
 
-    $this->clientRetriever->setClient($this->userReference);
+    $this->clientRetriever->setClient($this->userReference, false);
   }
 
   /**
