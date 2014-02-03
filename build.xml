@@ -2,6 +2,8 @@
 <project name="cb" default="install" basedir=".">
   <import file="app/buildTargets.xml" />
 
+  <target name="test" description="Build and test app in travis" depends="ci"/>
+  
   <target name="ci" description="Build whole application for jenkins" depends="install-dev,tests">
     <echo>CI server full</echo>
   </target>
