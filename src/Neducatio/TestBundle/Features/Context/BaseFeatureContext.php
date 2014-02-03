@@ -23,6 +23,7 @@ abstract class BaseFeatureContext extends MinkContext implements KernelAwareInte
   protected $parameters;
   protected $page;
   protected $registry;
+  protected $dependencies;
   protected $usingJs = false;
 
   /**
@@ -34,6 +35,7 @@ abstract class BaseFeatureContext extends MinkContext implements KernelAwareInte
   {
     $this->registry = new Registry();
     $this->parameters = $parameters;
+    $this->dependencies = new FixtureDependencyInvoker($this->kernel);
   }
 
   /**
@@ -66,8 +68,7 @@ abstract class BaseFeatureContext extends MinkContext implements KernelAwareInte
    */
   public function loadFixtures(array $fixtureClasses)
   {
-    $dependencies = new FixtureDependencyInvoker($this->kernel);
-    $this->fixtureLoader = new FixtureLoader($dependencies, $fixtureClasses);
+    $this->fixtureLoader = new FixtureLoader($this->dependencies, $fixtureClasses);
     $this->fixtureLoader->load();
   }
 

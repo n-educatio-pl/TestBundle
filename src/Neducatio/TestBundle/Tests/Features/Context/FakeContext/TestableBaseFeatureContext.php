@@ -9,4 +9,5 @@ use Neducatio\TestBundle\Features\Context\BaseFeatureContext;
 class TestableBaseFeatureContext extends BaseFeatureContext
 {
   public $kernel;
+  public $dependencies;
 }
