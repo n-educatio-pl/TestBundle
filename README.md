@@ -5,6 +5,9 @@ Paczka usprawnia mechanizm Symfonowskiego ładowania fixturesów. Paczka jest ca
 jest pokryta testami jednostkowymi w 100%. Co więcej, TestBundle wprowadza nową zasadę odwoływania się
 do konkretnych elementów na stronie za pomocą tak zwanych uchwytów.
 
+[![Build Status](https://travis-ci.org/n-educatio-pl/TestBundle.png?branch=2.3)](https://travis-ci.org/n-educatio-pl/TestBundle)
+
+
 Instalacja
 ----------
 
