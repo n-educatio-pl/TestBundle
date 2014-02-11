@@ -42,35 +42,47 @@ class WebClientRetrieverTest extends \PHPUnit_Framework_TestCase
   }
 
   /**
-   * Test for setClient
+   * Test for getClient
    *
    * @test
    */
-  public function shouldSetClientWhenValidServiceParamsGiven()
+  public function shouldReturnNotLoggedClientWhenEmptyStringAsReferenceGiven()
   {
-    $this->container->shouldReceive('hasParameter')->with('neducatio_test.web_client_login_form_params')->andReturn(true);
-    $this->container->shouldReceive('getParameter')->with('neducatio_test.web_client_login_form_params')->andReturn(self::$validServiceParams);
-    $result = $this->clientRetriever->setClient($this->userReference, false);
+    $result = $this->clientRetriever->getClient('');
 
     $this->assertEquals($this->client, $result);
   }
 
   /**
-   * Test for setClient
+   * Test for getClient
    *
    * @test
    */
-  public function setClient_shouldThrowExceptionWhenInvalidServiceParamsGiven()
+  public function shouldReturnLoggedClientWhenValidUserReferenceAndServiceParamsGiven()
+  {
+    $this->container->shouldReceive('hasParameter')->with('neducatio_test.web_client_login_form_params')->andReturn(true);
+    $this->container->shouldReceive('getParameter')->with('neducatio_test.web_client_login_form_params')->andReturn(self::$validServiceParams);
+    $result = $this->clientRetriever->getClient($this->userReference);
+
+    $this->assertEquals($this->client, $result);
+  }
+
+  /**
+   * Test for getClient
+   *
+   * @test
+   */
+  public function getClient_shouldThrowExceptionWhenInvalidServiceParamsGiven()
   {
     $this->container->shouldReceive('hasParameter')->with('neducatio_test.web_client_login_form_params')->andReturn(true);
     $this->container->shouldReceive('getParameter')->with('neducatio_test.web_client_login_form_params')->andReturn(self::$invalidServiceParams);
     $this->setExpectedException('\Neducatio\TestBundle\Utility\LoginFormParameterNotFoundException');
 
-    $this->clientRetriever->setClient($this->userReference, false);
+    $this->clientRetriever->getClient($this->userReference);
   }
 
   /**
-   * Test for setClient
+   * Test for getClient
    *
    * @test
    */
@@ -79,7 +91,7 @@ class WebClientRetrieverTest extends \PHPUnit_Framework_TestCase
     $this->container->shouldReceive('hasParameter')->with('neducatio_test.web_client_login_form_params')->andReturn(false);
     $this->setExpectedException('\Neducatio\TestBundle\Utility\LoginFormParameterNotFoundException');
 
-    $this->clientRetriever->setClient($this->userReference, false);
+    $this->clientRetriever->getClient($this->userReference);
   }
 
   /**
@@ -119,6 +131,7 @@ class WebClientRetrieverTest extends \PHPUnit_Framework_TestCase
     $client = m::mock('Symfony\Bundle\FrameworkBundle\Client');
     $client->shouldReceive('request')->with('GET', '/login')->andReturn($this->getCrawlerMock());
     $client->shouldReceive('submit')->with($this->form, array('_username' => self::USER_NAME, '_password' => 'test'));
+    $client->shouldReceive('followRedirects');
 
     return $client;
   }
