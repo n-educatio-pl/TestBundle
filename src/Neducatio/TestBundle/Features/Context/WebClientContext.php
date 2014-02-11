@@ -14,7 +14,7 @@ class WebClientContext extends BaseSubContext
     if ($reference === null) {
       $this->client = $this->getRegistry()->get('client');
     } else {
-      $this->client = $this->getRegistry()->access('client', $this->getContainer()->get('neducatio_test.web_client')->setClient($reference, $followRedirects));
+      $this->client = $this->getRegistry()->access('client', $this->getContainer()->get('neducatio_test.web_client')->getClient($reference, $followRedirects));
     }
 
     return $this->client;

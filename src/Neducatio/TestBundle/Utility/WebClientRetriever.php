@@ -12,15 +12,17 @@ use FOS\UserBundle\Entity\User;
 class WebClientRetriever
 {
   private $container;
+  private $client;
 
   /**
    * Constructor
    *
-   * @param Container $em
+   * @param Container $container
    */
   public function __construct(Container $container)
   {
     $this->container = $container;
+    $this->client = $container->get('test.client');
   }
 
   /**
@@ -31,24 +33,28 @@ class WebClientRetriever
    *
    * @return Client
    */
-  public function setClient($reference, $followRedirects)
+  public function getClient($reference, $followRedirects = true)
   {
-    return $this->logInUser($reference, $followRedirects);
+    if ($followRedirects) {
+      $this->client->followRedirects();
+    }
+    if ($reference === '') {
+
+      return $this->client;
+    }
+
+    return $this->logInUser($reference);
   }
 
-  private function logInUser($reference, $followRedirects)
+  private function logInUser($reference)
   {
-    $client  = $this->container->get('test.client');
-    if ($followRedirects) {
-      $client->followRedirects();
-    }
     $parameters = $this->getLoginFormParameters();
-    $crawler = $client->request('GET', $parameters['form_url']);
+    $crawler = $this->client->request('GET', $parameters['form_url']);
     $form    = $crawler->selectButton($parameters['submit_button_name'])->form();
 
-    $client->submit($form, array($parameters['username_field_name'] => $reference->getUsername(), $parameters['password_field_name'] => 'test'));
+    $this->client->submit($form, array($parameters['username_field_name'] => $reference->getUsername(), $parameters['password_field_name'] => 'test'));
 
-    return $client;
+    return $this->client;
   }
 
   private function getLoginFormParameters()
