@@ -14,11 +14,21 @@ class PHPUnitRunnerShould extends \PHPUnit_Framework_TestCase
   /**
    * @test
    * @expectedException InvalidArgumentException
-   * @expectedExceptionMessage Given test class does not exists
+   * @expectedExceptionMessage Given test class does not exist
    */
-  public function throwExceptionIfTestClassDoesNotExists()
+  public function throwExceptionIfTestClassDoesNotExist()
   {
     new PHPUnitRunner('Neducatio\TestBundle\Tests\Utility\PHPUnit\NotExistingTest');
+  }
+
+  /**
+   * @test
+   * @expectedException InvalidArgumentException
+   * @expectedExceptionMessage Given test class does not extend \PHPUnit_Framework_TestCase
+   */
+  public function throwExceptionIfTestClassDoesNotExtendPHPUnitFrameworkTestCase()
+  {
+    new PHPUnitRunner('\stdClass');
   }
 
   /**
@@ -44,7 +54,7 @@ class PHPUnitRunnerShould extends \PHPUnit_Framework_TestCase
   /**
    * @test
    */
-  public function callSetupBeforeRunTest()
+  public function callSetUpBeforeRunTest()
   {
     $phpunitRunner = new PHPUnitRunner('Neducatio\TestBundle\Tests\Utility\PHPUnit\SampleTest');
 
@@ -83,9 +93,9 @@ class PHPUnitRunnerShould extends \PHPUnit_Framework_TestCase
   /**
    * @test
    * @expectedException InvalidArgumentException
-   * @expectedExceptionMessage Given test method does not exists
+   * @expectedExceptionMessage Given test method does not exist
    */
-  public function throwExceptionIfTestCaseMethodDoesNotExists()
+  public function throwExceptionIfTestCaseMethodDoesNotExist()
   {
     $phpunitRunner = new PHPUnitRunner('Neducatio\TestBundle\Tests\Utility\PHPUnit\SampleTest');
 
