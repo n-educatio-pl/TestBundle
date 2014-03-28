@@ -19,10 +19,14 @@ class PHPUnitRunner
   public function __construct($testClassNamespace)
   {
     if (!class_exists($testClassNamespace)) {
-      throw new \InvalidArgumentException('Given test class does not exists');
+      throw new \InvalidArgumentException('Given test class does not exist');
     }
 
     $this->testCase = new $testClassNamespace;
+
+    if (!($this->testCase instanceof \PHPUnit_Framework_TestCase)) {
+      throw new \InvalidArgumentException('Given test class does not extend \PHPUnit_Framework_TestCase');
+    }
   }
 
   /**
@@ -39,13 +43,13 @@ class PHPUnitRunner
    * Run test
    *
    * @param string $method Test name
-   * 
+   *
    * @throws \InvalidArgumentException
    */
   public function run($method)
   {
     if (!method_exists($this->testCase, $method)) {
-      throw new \InvalidArgumentException('Given test method does not exists');
+      throw new \InvalidArgumentException('Given test method does not exist');
     }
 
     $this->testCase->setUp();
