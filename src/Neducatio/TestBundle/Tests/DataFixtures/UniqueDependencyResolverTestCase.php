@@ -107,7 +107,7 @@ abstract class UniqueDependencyResolverTestCase extends \PHPUnit_Framework_TestC
   {
     $component =  m::mock('\Neducatio\TestBundle\DataFixtures\FixtureComponentInterface');
     $component->shouldReceive('getChildren')->andReturn($children);
-    $component->shouldReceive('getId')->andReturn(get_class($component));
+    $component->shouldReceive('getId')->andReturn(spl_object_hash($component));
 
     return $component;
   }
