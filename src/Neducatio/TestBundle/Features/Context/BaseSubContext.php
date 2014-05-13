@@ -81,8 +81,12 @@ abstract class BaseSubContext extends BehatContext implements KernelAwareInterfa
    *
    * @return string
    */
-  public function translate($message, array $parameters = array(), $lang = 'pl')
+  public function translate($message, array $parameters = array(), $lang = null)
   {
+    if (null === $lang) {
+      $lang = $this->kernel->getContainer()->getParameter('locale');
+    }
+
     $translator = $this->kernel->getContainer()->get('translator');
 
     return $translator->trans($message, $parameters, 'messages', $lang);
