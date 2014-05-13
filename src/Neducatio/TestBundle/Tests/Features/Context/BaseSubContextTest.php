@@ -86,11 +86,21 @@ class BaseSubContextTest extends SubContextTestCase
   /**
    * @test
    */
-  public function translate_shouldCallTransMethodOnTranslator()
+  public function translate_shouldCallTransMethodOnTranslatorAndGetLocaleFromParameters()
   {
     $this->translator->shouldReceive('trans')->with('messageToTrans', array(), 'messages', 'pl')->once();
-    $this->feature->setKernel($this->getKernelMock());
+    $this->feature->setKernel($this->getKernelMock(1));
     $this->feature->translate('messageToTrans');
+  }
+
+  /**
+   * @test
+   */
+  public function translate_shouldCallTransMethodOnTranslatorAndGetLocaleFromMethodCall()
+  {
+    $this->translator->shouldReceive('trans')->with('messageToTrans', array(), 'messages', 'en')->once();
+    $this->feature->setKernel($this->getKernelMock(0));
+    $this->feature->translate('messageToTrans', array(), 'en');
   }
 
   /**
@@ -248,12 +258,13 @@ class BaseSubContextTest extends SubContextTestCase
   }
 
 
-  private function getKernelMock()
+  private function getKernelMock($getLocaleParameterTimes = 0)
   {
     $container = m::mock('stdClass');
     $container->shouldReceive('get')->andReturn($this->translator);
     $kernel = m::mock('Symfony\Component\HttpKernel\KernelInterface');
     $kernel->shouldReceive('getContainer')->andReturn($container);
+    $container->shouldReceive('getParameter')->with('locale')->andReturn('pl')->times($getLocaleParameterTimes);
 
     return $kernel;
   }
