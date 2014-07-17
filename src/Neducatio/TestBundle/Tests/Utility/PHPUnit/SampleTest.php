@@ -7,14 +7,27 @@ namespace Neducatio\TestBundle\Tests\Utility\PHPUnit;
  */
 class SampleTest extends \PHPUnit_Framework_TestCase
 {
-  private $callStack = array();
+  static private $callStack = array();
+
+  /**
+   * Construct
+   *
+   * @param type  $name     Name
+   * @param array $data     Data
+   * @param type  $dataName DataName
+   */
+  public function __construct($name = null, array $data = array(), $dataName = '')
+  {
+    static::$callStack = array();
+    parent::__construct($name, $data, $dataName);
+  }
 
   /**
    * @test
    */
   public function checkIfTrueEqualsTrue()
   {
-    $this->callStack[] = 'test';
+    static::$callStack[] = 'test';
     $this->assertTrue(true);
   }
 
@@ -23,7 +36,7 @@ class SampleTest extends \PHPUnit_Framework_TestCase
    */
   public function setUp()
   {
-    $this->callStack[] = 'setUp';
+    static::$callStack[] = 'setUp';
   }
 
   /**
@@ -31,7 +44,23 @@ class SampleTest extends \PHPUnit_Framework_TestCase
    */
   public function tearDown()
   {
-    $this->callStack[] = 'tearDown';
+    static::$callStack[] = 'tearDown';
+  }
+
+  /**
+   * Set up before class
+   */
+  static public function setUpBeforeClass()
+  {
+    static::$callStack[] = 'setUpBeforeClass';
+  }
+
+  /**
+   * Tear down
+   */
+  static public function tearDownAfterClass()
+  {
+    static::$callStack[] = 'tearDownAfterClass';
   }
 
   /**
@@ -41,7 +70,7 @@ class SampleTest extends \PHPUnit_Framework_TestCase
    */
   public function getCallStack()
   {
-    return $this->callStack;
+    return static::$callStack;
   }
 }
 
