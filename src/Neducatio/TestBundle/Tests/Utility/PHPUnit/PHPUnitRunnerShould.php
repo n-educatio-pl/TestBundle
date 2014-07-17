@@ -3,6 +3,7 @@
 namespace Neducatio\TestBundle\Tests\Utility\PHPUnit;
 
 use Neducatio\TestBundle\Utility\PHPUnit\PHPUnitRunner;
+use Mockery as m;
 
 /**
  * Tests
@@ -54,6 +55,17 @@ class PHPUnitRunnerShould extends \PHPUnit_Framework_TestCase
   /**
    * @test
    */
+  public function callSetUpBeforeClassAfterCreateTestCase()
+  {
+    $phpunitRunner = new PHPUnitRunner('Neducatio\TestBundle\Tests\Utility\PHPUnit\SampleTest');
+
+    $callStack = $phpunitRunner->getTestCase()->getCallStack();
+    $this->assertSame('setUpBeforeClass', $callStack[0]);
+  }
+
+  /**
+   * @test
+   */
   public function callSetUpBeforeRunTest()
   {
     $phpunitRunner = new PHPUnitRunner('Neducatio\TestBundle\Tests\Utility\PHPUnit\SampleTest');
@@ -61,7 +73,7 @@ class PHPUnitRunnerShould extends \PHPUnit_Framework_TestCase
     $phpunitRunner->run('checkIfTrueEqualsTrue');
 
     $callStack = $phpunitRunner->getTestCase()->getCallStack();
-    $this->assertSame('setUp', $callStack[0]);
+    $this->assertSame('setUp', $callStack[1]);
   }
 
   /**
@@ -74,7 +86,7 @@ class PHPUnitRunnerShould extends \PHPUnit_Framework_TestCase
     $phpunitRunner->run('checkIfTrueEqualsTrue');
 
     $callStack = $phpunitRunner->getTestCase()->getCallStack();
-    $this->assertSame('test', $callStack[1]);
+    $this->assertSame('test', $callStack[2]);
   }
 
   /**
@@ -87,7 +99,21 @@ class PHPUnitRunnerShould extends \PHPUnit_Framework_TestCase
     $phpunitRunner->run('checkIfTrueEqualsTrue');
 
     $callStack = $phpunitRunner->getTestCase()->getCallStack();
-    $this->assertSame('tearDown', $callStack[2]);
+    $this->assertSame('tearDown', $callStack[3]);
+  }
+
+  /**
+   * @test
+   */
+  public function tearDownWhenCallTearDownAfterClass()
+  {
+    $phpunitRunner = new PHPUnitRunner('Neducatio\TestBundle\Tests\Utility\PHPUnit\SampleTest');
+
+    $phpunitRunner->run('checkIfTrueEqualsTrue');
+    $phpunitRunner->tearDownAfterClass();
+
+    $callStack = $phpunitRunner->getTestCase()->getCallStack();
+    $this->assertSame('tearDownAfterClass', $callStack[4]);
   }
 
   /**
@@ -100,6 +126,33 @@ class PHPUnitRunnerShould extends \PHPUnit_Framework_TestCase
     $phpunitRunner = new PHPUnitRunner('Neducatio\TestBundle\Tests\Utility\PHPUnit\SampleTest');
 
     $phpunitRunner->run('notExistingMethod');
+  }
+
+  /**
+   * @test
+   * @expectedException InvalidArgumentException
+   * @expectedExceptionMessage Kernel object is not defined
+   */
+  public function throwExceptionIfPassedWebTestCaseClassWithoutKernel()
+  {
+    new PHPUnitRunner('Neducatio\TestBundle\Tests\Utility\PHPUnit\SampleWebTestCase');
+  }
+
+  /**
+   * @test
+   */
+  public function setKernelClassInWebTestCaseWhenKernelIsPassed()
+  {
+    $phpunitRunner = new PHPUnitRunner('Neducatio\TestBundle\Tests\Utility\PHPUnit\SampleWebTestCase', $this->getKernel());
+
+    $this->assertTrue($phpunitRunner->getTestCase()->hasKernelClass());
+  }
+
+  private function getKernel()
+  {
+    $kernel = m::mock('Symfony\Component\HttpKernel\KernelInterface');
+
+    return $kernel;
   }
 }
 
