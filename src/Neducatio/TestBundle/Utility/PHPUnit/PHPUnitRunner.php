@@ -2,6 +2,9 @@
 
 namespace Neducatio\TestBundle\Utility\PHPUnit;
 
+use Symfony\Component\HttpKernel\KernelInterface;
+use Neducatio\TestBundle\Utility\PHPUnit\WebTestCase;
+
 /**
  * PHPUnit test runner
  */
@@ -12,11 +15,12 @@ class PHPUnitRunner
   /**
    * Prepare test case object
    *
-   * @param string $testClassNamespace Test class namespace
+   * @param string          $testClassNamespace Test class namespace
+   * @param KernelInterface $kernel             Kernel
    *
    * @throws \InvalidArgumentException
    */
-  public function __construct($testClassNamespace)
+  public function __construct($testClassNamespace, KernelInterface $kernel = null)
   {
     if (!class_exists($testClassNamespace)) {
       throw new \InvalidArgumentException('Given test class does not exist');
@@ -27,6 +31,12 @@ class PHPUnitRunner
     if (!($this->testCase instanceof \PHPUnit_Framework_TestCase)) {
       throw new \InvalidArgumentException('Given test class does not extend \PHPUnit_Framework_TestCase');
     }
+
+    if ($this->testCase instanceof WebTestCase) {
+      $this->setTestCaseKernel($testClassNamespace, $kernel);
+    }
+
+    $testClassNamespace::setUpBeforeClass();
   }
 
   /**
@@ -52,8 +62,35 @@ class PHPUnitRunner
       throw new \InvalidArgumentException('Given test method does not exist');
     }
 
-    $this->testCase->setUp();
+    $setUpReflection = new \ReflectionMethod($this->testCase, 'setUp');
+    $tearDownReflection = new \ReflectionMethod($this->testCase, 'tearDown');
+
+    if ($setUpReflection->isPublic()) {
+        $this->testCase->setUp();
+    }
+
     $this->testCase->$method();
-    $this->testCase->tearDown();
+
+    if ($tearDownReflection->isPublic()) {
+        $this->testCase->tearDown();
+    }
+  }
+
+  /**
+   * Call tear down after class on test case
+   */
+  public function tearDownAfterClass()
+  {
+    $class = $this->testCase;
+    $class::tearDownAfterClass();
+  }
+
+  private function setTestCaseKernel($testClassNamespace, KernelInterface $kernel = null)
+  {
+    if ($kernel === null) {
+      throw new \InvalidArgumentException('Kernel object is not defined');
+    }
+
+    $testClassNamespace::setKernelClass($kernel);
   }
 }
