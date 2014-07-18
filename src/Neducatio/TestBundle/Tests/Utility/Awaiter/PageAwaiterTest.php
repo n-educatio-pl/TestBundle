@@ -97,9 +97,9 @@ class PageAwaiterTest extends \PHPUnit_Framework_TestCase
   {
     $selector = "#t_element";
     $type = "css";
-    $page = $this->createNodeElementMockWithVisibleElement($selector, $type);
+    $page = $this->createNodeElementMockWithVisibleElement($selector, $type, false);
     $awaiter = $this->getAwaiter($page);
-    $awaiter->waitUntilVisible($selector, $type);
+    $awaiter->waitUntilVisible($selector, $type, true);
   }
 
   /**
@@ -174,11 +174,13 @@ class PageAwaiterTest extends \PHPUnit_Framework_TestCase
     return $this->createPageMockWithConfiguredElement($selector, $type, true, true);
   }
 
-  private function createNodeElementMockWithVisibleElement($selector, $type)
+  private function createNodeElementMockWithVisibleElement($selector, $type, $checkVisibility = true)
   {
     $page = m::mock("\Behat\Mink\Element\NodeElement");
     $element = m::mock("\Behat\Mink\Element\NodeElement");
-    $element->shouldReceive("isVisible")->andReturn(true)->atLeast()->times(1);
+    if ($checkVisibility) {
+        $element->shouldReceive("isVisible")->andReturn(true)->atLeast()->times(1);
+    }
     $page->shouldReceive("find")->with($type, $selector)->andReturn($element)->atLeast()->times(1);
 
     return $page;
