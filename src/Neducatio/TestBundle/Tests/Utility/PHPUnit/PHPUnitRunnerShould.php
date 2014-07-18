@@ -140,6 +140,16 @@ class PHPUnitRunnerShould extends \PHPUnit_Framework_TestCase
 
   /**
    * @test
+   * @expectedException InvalidArgumentException
+   * @expectedExceptionMessage Given web test case does not extend \Neducatio\TestBundle\Utility\PHPUnit\WebTestCase
+   */
+  public function throwExceptionIfGivenTestCaseDoesNotExtendNeducatioWebTestCase()
+  {
+    new PHPUnitRunner('Neducatio\TestBundle\Tests\Utility\PHPUnit\BaseWebTestCase', $this->getKernel());
+  }
+
+  /**
+   * @test
    */
   public function setKernelClassInWebTestCaseWhenKernelIsPassed()
   {

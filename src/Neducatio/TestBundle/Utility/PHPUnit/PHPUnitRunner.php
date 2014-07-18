@@ -4,6 +4,7 @@ namespace Neducatio\TestBundle\Utility\PHPUnit;
 
 use Symfony\Component\HttpKernel\KernelInterface;
 use Neducatio\TestBundle\Utility\PHPUnit\WebTestCase;
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase as BaseWebTestCase;
 
 /**
  * PHPUnit test runner
@@ -34,6 +35,8 @@ class PHPUnitRunner
 
     if ($this->testCase instanceof WebTestCase) {
       $this->setTestCaseKernel($testClassNamespace, $kernel);
+    } else if ($this->testCase instanceof BaseWebTestCase) {
+      throw new \InvalidArgumentException('Given web test case does not extend \Neducatio\TestBundle\Utility\PHPUnit\WebTestCase');
     }
 
     $testClassNamespace::setUpBeforeClass();
