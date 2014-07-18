@@ -16,7 +16,7 @@ require_once 'PHPUnit/Framework/Assert/Functions.php';
 /**
  * Feature context.
  */
-abstract class BaseFeatureContext extends MinkContext implements KernelAwareInterface
+abstract class NBaseFeatureContext extends MinkContext implements KernelAwareInterface
 {
   protected $kernel;
   protected $fixtureLoader;
