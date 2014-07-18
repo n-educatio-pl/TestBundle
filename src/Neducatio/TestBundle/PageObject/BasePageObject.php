@@ -4,6 +4,7 @@ namespace Neducatio\TestBundle\PageObject;
 
 use Neducatio\TestBundle\Utility\HookHarvester;
 use \Behat\Mink\Element\TraversableElement;
+use \Behat\Mink\Session;
 
 /**
  * Base page object
@@ -18,6 +19,7 @@ abstract class BasePageObject
   protected $harvester;
   protected $subPageObjectsData = array();
   protected $subPageObjects;
+  protected $session;
 
   /**
    * Do sth.
@@ -26,8 +28,9 @@ abstract class BasePageObject
    * @param PageObjectBuilder  $builder   Page object builder
    * @param HookHarvester      $harvester Hook harvester for this page
    * @param BasePageObject     $parent    Subpage object parent
+   * @param Session            $session   Session
    */
-  public function __construct(TraversableElement $page, PageObjectBuilder $builder, HookHarvester $harvester, BasePageObject $parent = null)
+  public function __construct(TraversableElement $page, PageObjectBuilder $builder, HookHarvester $harvester, BasePageObject $parent = null, Session $session = null)
   {
     $this->page = $page;
     $this->builder = $builder;
@@ -35,6 +38,7 @@ abstract class BasePageObject
     $this->harvester = $harvester;
     $this->builder->getValidator($page)->validate($page, $this->proofSelector, $this->proofSelectorVisibility);
     $this->harvester->registerHooks($this);
+    $this->session = $session;
   }
 
   /**
@@ -112,6 +116,16 @@ abstract class BasePageObject
   public function getAwaiter()
   {
     return $this->builder->getAwaiter($this->page);
+  }
+
+  /**
+   * Get Session
+   *
+   * @return Session
+   */
+  public function getSession()
+  {
+    return $this->session;
   }
 
 //  /**
