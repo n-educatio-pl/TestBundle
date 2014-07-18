@@ -47,13 +47,7 @@ php composer.phar install
 Uruchamianie testów paczki TestBundle
 -------------------------------------
 
-Aby uruchomić testy tej paczki, trzeba stworzyć bazę danych (o ile już nie istnieje na devie) zgodną z plikiem **config.yml**. Baza ta musi zawierać pustą tabelę animal, zatem wystarczy wykonać poniższe polecenia:
-``` sql
-CREATE DATABASE neducatio_testbundle;
-CREATE TABLE animal();
-```
-
-Następnie można uruchomić testy poleceniem: t phpunit, etc.
+ant test - testy phpunit oraz testy behat
 
 Przykład użycia fixturesów
 --------------------------
