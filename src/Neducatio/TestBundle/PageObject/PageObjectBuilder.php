@@ -35,13 +35,15 @@ class PageObjectBuilder
   }
 
   /**
-   * Builds
+   * Builds page objects
    *
-   * @param string          $page             Page
-   * @param DocumentElement $element          Document element
-   * @param BasePageObject  $parentPageObject Page object which build new subpage (null if it is main pageobject)
+   * @param string             $page             Page
+   * @param TraversableElement $element          Document element
+   * @param BasePageObject     $parentPageObject Page object which build new subpage (null if it is main pageobject)
    *
-   * @return instance of page
+   * @return BasePageObject
+   *
+   * @throws \InvalidArgumentException
    */
   public function build($page, TraversableElement $element = null, BasePageObject $parentPageObject = null)
   {
@@ -49,7 +51,7 @@ class PageObjectBuilder
       $element = $this->getCurrentBrowserPage($element);
       $harvester = new HookHarvester($this);
 
-      return new $page($element, $this, $harvester, $parentPageObject);
+      return new $page($element, $this, $harvester, $parentPageObject, $this->context->getSession());
     } else {
       throw new \InvalidArgumentException("Page class \"{$page}\" doesn't exist");
     }

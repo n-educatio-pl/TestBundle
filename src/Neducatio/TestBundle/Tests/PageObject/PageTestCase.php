@@ -10,6 +10,7 @@ use Behat\Mink\Element\TraversableElement;
 abstract class PageTestCase extends \PHPUnit_Framework_TestCase
 {
   protected $harvester;
+  protected $session;
   protected $pageObject;
   protected $page;
   protected $subpage;
@@ -64,6 +65,13 @@ abstract class PageTestCase extends \PHPUnit_Framework_TestCase
     $this->harvester->shouldReceive('registerHooks')->byDefault();
 
     return $this->harvester;
+  }
+
+  protected function getSession()
+  {
+    $this->session = m::mock('\Behat\Mink\Session');
+
+    return $this->session;
   }
 
   /**
