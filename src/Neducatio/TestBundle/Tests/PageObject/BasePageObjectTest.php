@@ -110,6 +110,16 @@ class BasePageObjectTest extends PageTestCase
    *
    * @test
    */
+  public function getSession_shouldReturnSettedSession()
+  {
+    $this->assertInstanceOf('\Behat\Mink\Session', $this->pageObject->getSession());
+  }
+
+  /**
+   * Do sth.
+   *
+   * @test
+   */
   public function getParent_PageObjectHasNoParentPassed_shouldReturnNull()
   {
     $this->assertNull($this->pageObject->getParent());
@@ -147,7 +157,7 @@ class BasePageObjectTest extends PageTestCase
    */
   protected function getPageObject()
   {
-    return new TestableBasePage($this->page, $this->getBuilder($this->page), $this->getHarvester());
+    return new TestableBasePage($this->page, $this->getBuilder($this->page), $this->getHarvester(), null, $this->getSession());
   }
   /**
    * Gets PageObject

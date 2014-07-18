@@ -13,12 +13,14 @@ framework:
     
 doctrine:
     dbal:
-        driver: pdo_pgsql
-        host: localhost
-        port: 5432
-        dbname: neducatio_testbundle
-        user: postgres
-        password: ~
+        driver:   pdo_sqlite
+        host:     ""
+        port:     ""
+        dbname:   "%kernel.root_dir%/neducatio_testbundle.sqlite"
+        path:     "%kernel.root_dir%/neducatio_testbundle.sqlite"
+        user:     ""
+        password: ""
+        charset:  UTF8
 
     orm:
         auto_generate_proxy_classes: %kernel.debug%
