@@ -13,6 +13,7 @@ class WebClientRetriever
 {
   private $container;
   private $client;
+  private $parameters;
 
   /**
    * Constructor
@@ -23,6 +24,7 @@ class WebClientRetriever
   {
     $this->container = $container;
     $this->client = $container->get('test.client');
+    $this->parameters = $this->getLoginFormParameters();
   }
 
   /**
@@ -48,13 +50,27 @@ class WebClientRetriever
 
   private function logInUser($reference)
   {
-    $parameters = $this->getLoginFormParameters();
-    $crawler = $this->client->request('GET', $parameters['form_url']);
-    $form    = $crawler->selectButton($parameters['submit_button_name'])->form();
+    $crawler = $this->goToLoginPage();
 
-    $this->client->submit($form, array($parameters['username_field_name'] => $reference->getUsername(), $parameters['password_field_name'] => 'test'));
+    if ($crawler->selectButton($this->parameters['submit_button_name'])->count() === 0) {
+        $this->logOutUser();
+        $crawler = $this->goToLoginPage();
+    }
+
+    $form    = $crawler->selectButton($this->parameters['submit_button_name'])->form();
+    $this->client->submit($form, array($this->parameters['username_field_name'] => $reference->getUsername(), $this->parameters['password_field_name'] => 'test'));
 
     return $this->client;
+  }
+
+  private function logOutUser()
+  {
+      return $this->client->request('GET', $this->parameters['logout_url']);
+  }
+
+  private function goToLoginPage()
+  {
+      return $this->client->request('GET', $this->parameters['form_url']);
   }
 
   private function getLoginFormParameters()
@@ -64,7 +80,7 @@ class WebClientRetriever
       throw new LoginFormParameterNotFoundException('Login form parameters not defined!');
     }
     $parameters = $this->container->getParameter('neducatio_test.web_client_login_form_params');
-    $paramNames = array('form_url', 'username_field_name', 'password_field_name', 'submit_button_name');
+    $paramNames = array('form_url', 'username_field_name', 'password_field_name', 'submit_button_name', 'logout_url');
     foreach ($paramNames as $paramName) {
       if (!isset($parameters[$paramName])) {
 
