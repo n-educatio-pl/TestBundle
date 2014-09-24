@@ -199,6 +199,9 @@ class HookHarvesterTest extends \PHPUnit_Framework_TestCase
     $harvest2 = $this->getNodeElement(array($hook1, $hook2, $hook3));
     $this->harvester->refreshHooks($this->getPageObject($this->getPageWithResult($harvest2), '.t_someSelector'));
     $this->assertSame(array('hook1', 'hook2', 'hook3'), array_keys($this->harvester->getRegister()));
+    $this->assertEquals(1, $this->harvester->count("hook1"));
+    $this->assertEquals(1, $this->harvester->count("hook2"));
+    $this->assertEquals(1, $this->harvester->count("hook3"));
   }
 
   /**
