@@ -207,6 +207,26 @@ class HookHarvesterTest extends \PHPUnit_Framework_TestCase
    *
    * @test
    */
+  public function refresh_refreshAfterRegistering_shouldReturnHooksInArrayWithoutDuplicates()
+  {
+    $hook1 = $this->getHook('t_hook1');
+    $hook2 = $this->getHook('t_hook2');
+    $hook3 = $this->getHook('t_hook3');
+    $harvest = $this->getNodeElement(array($hook1, $hook2));
+    $this->harvester->registerHooks($this->getPageObject($this->getPageWithResult($harvest), '.t_someSelector'));
+    $harvest2 = $this->getNodeElement(array($hook1, $hook2, $hook3));
+    $this->harvester->refreshHooks($this->getPageObject($this->getPageWithResult($harvest2), '.t_someSelector'));
+    $this->assertSame(array('hook1', 'hook2', 'hook3'), array_keys($this->harvester->getRegister()));
+    $this->assertEquals(1, $this->harvester->count("hook1"));
+    $this->assertEquals(1, $this->harvester->count("hook2"));
+    $this->assertEquals(1, $this->harvester->count("hook3"));
+  }
+
+  /**
+   * Do sth.
+   *
+   * @test
+   */
   public function count_nonExistsingKey_shouldReturnZero()
   {
     $hook1 = $this->getHook('t_hook1');

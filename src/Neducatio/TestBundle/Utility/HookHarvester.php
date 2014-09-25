@@ -42,6 +42,17 @@ class HookHarvester
     $this->register($pageObject, $customClass);
   }
 
+  /**
+   * Refresh Hooks
+   *
+   * @param BasePageObject $pageObject PageObject witch harvest
+   */
+  public function refreshHooks(BasePageObject $pageObject)
+  {
+    $this->register = array();
+    $this->register($pageObject, $pageObject->getProofSelector());
+  }
+
   protected function register(BasePageObject $pageObject, $proofSelector)
   {
     $elements = $this->getNodeElements($pageObject->getPageElement(), $proofSelector);
