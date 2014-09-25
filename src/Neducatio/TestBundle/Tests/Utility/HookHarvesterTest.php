@@ -167,6 +167,7 @@ class HookHarvesterTest extends \PHPUnit_Framework_TestCase
     $this->awaiter->shouldReceive('waitUntilVisible')->with('.ui-dialog-content')->andThrow('\Neducatio\TestBundle\Utility\Awaiter\ConditionNotFulfilledException');
     $this->harvester->registerHooksFromPrompt($this->getPageObject($page, '.t_someSelector'));
   }
+
   /**
    * Do sth.
    *
@@ -181,6 +182,23 @@ class HookHarvesterTest extends \PHPUnit_Framework_TestCase
     $page->shouldReceive('find')->with('css', '.t_someSelector')->andReturn(null);
     $page->shouldReceive('find')->with('css', '.ui-dialog-content')->andReturn($harvest);
     $this->harvester->registerHooksFromPrompt($this->getPageObject($page, '.t_someSelector'));
+    $this->assertSame(array('hook1', 'hook2'), array_keys($this->harvester->getRegister()));
+  }
+
+  /**
+   * Do sth.
+   *
+   * @test
+   */
+  public function registerHooksFromPrompt_validHarvestWithOneHookWithCustomClassPassed_shouldAddOneHookToArray()
+  {
+    $hook1 = $this->getHook('t_hook1');
+    $hook2 = $this->getHook('t_hook2');
+    $harvest = $this->getNodeElement(array($hook1, $hook2));
+    $page = m::mock('\Behat\Mink\Element\DocumentElement');
+    $page->shouldReceive('find')->with('css', '.t_someSelector')->andReturn(null);
+    $page->shouldReceive('find')->with('css', '.t_customClass')->andReturn($harvest);
+    $this->harvester->registerHooksFromPrompt($this->getPageObject($page, '.t_someSelector'), ".t_customClass");
     $this->assertSame(array('hook1', 'hook2'), array_keys($this->harvester->getRegister()));
   }
 

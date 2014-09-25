@@ -37,9 +37,9 @@ class HookHarvester
    *
    * @param BasePageObject $pageObject PageObject witch harvest
    */
-  public function registerHooksFromPrompt(BasePageObject $pageObject)
+  public function registerHooksFromPrompt(BasePageObject $pageObject, $customClass = '.ui-dialog-content')
   {
-    $this->register($pageObject, '.ui-dialog-content');
+    $this->register($pageObject, $customClass);
   }
 
   protected function register(BasePageObject $pageObject, $proofSelector)
