@@ -1,40 +1,98 @@
 #!/bin/sh
-echo "" > tmp/codecoverage.txt
-echo "" > tmp/phpunit_singlefile.xml.dist
-if [ "$1" = "" ]
-then
-  echo "Usage:"
-  echo "t phpunit:                Run all phpunit tests"
-  echo "t behat:                  Run all behat tests"
-  echo "t path/to/testedFile.php: Run test for given file"
+usage() {
+cat << EOF
+t [OPTIONS] /path/to/test/file/or/directory
 
-elif [ "$1" = "behat" ]
-then
-  status=0
+t phpunit              Run all tests with configuration from app directory
+t behat                Run all behat scenarios
 
-  bin/behat @AcmeAnimalBundle $2 $3 $4 $5
-  lastStatus=$?
-  if [ $lastStatus -ne 0 ]; then status=$lastStatus; fi
+OPTIONS (connect all options together with single dash):
+    -c                 Run tests with coverage
+    -g <groupname>     Run tests with given group
+    -l                 Run tests in loop
+EOF
+}
 
-  exit $status
-elif [ "$1" = "phpunit" ]
-then
-  vendor/bin/phpunit -c app $2 $3 $4 $5
-  exit $?
-elif [ "$1" = "phpunitcoverage" ]
-then
-  vendor/bin/phpunit --configuration app/phpunitCoverage.xml.dist $2 $3 $4 $5
-  exit $?
-else
-  php app/phpunit_singlefile.xml.dist.php "$1" > tmp/phpunit_singlefile.xml.dist
-  while true
-  do
-    vendor/bin/phpunit -c tmp/phpunit_singlefile.xml.dist $2 $3 $4 $5
-    cat tmp/codecoverage.txt
-  done
+test() {
+    phpunit -c tmp/phpunit_configuration.xml.dist $GROUPS
+    if [ "$COVERAGE" = "--coverage" ]; then
+        cat tmp/codecoverage.txt
+    fi
+    if [ $LOOP = 1 ]; then
+        test
+    fi
+}
+
+if [ $# = 0 ]; then
+    usage
+    exit
 fi
 
-# za duzo miejsca
-# cat tmp/codecoverage.txt
-echo ""
+COVERAGE=""
+LOOP=0
+DIRECTORY=0
+GROUP=0
+GROUPS=""
+FILES=""
 
+while getopts “cg:lh” OPTION
+do
+    case $OPTION in
+        c|l|g)
+            if [ "$OPTION" = "c" ]; then
+                COVERAGE="--coverage"
+            fi
+            if [ "$OPTION" = "l" ]; then
+                LOOP=1
+            fi
+            if [ "$OPTION" = "g" ]; then
+                GROUP=1
+            fi
+            ;;
+        h)
+            usage
+            exit
+            ;;
+        ?)
+            usage
+            exit
+            ;;
+    esac
+done
+
+if [ "$COVERAGE" = "--coverage" ] || [ $LOOP = 1 ] || [ $GROUP = 1 ]; then
+    shift
+fi
+
+if [ $GROUP = 1 ]; then
+    GROUPS="--group $1"
+    shift
+fi
+
+if [ $# = 0 ]; then
+    usage
+    exit
+fi
+
+FILES=$@
+
+if [ -d $FILES ]; then
+    DIRECTORY=1
+fi
+
+if [ "$1" = "phpunit" ]; then
+    phpunit -c app/
+    exit
+elif [ "$1" = "behat" ]; then
+    bin/behat @AcmeAnimalBundle $2 $3 $4 $5
+
+    exit $?
+fi
+
+if [ $DIRECTORY = 1 ]; then
+    php app/phpunit_current_dir.xml.dist.php $FILES $COVERAGE > tmp/phpunit_configuration.xml.dist
+else
+    php app/phpunit_fileAndTest.xml.dist.php $COVERAGE $FILES > tmp/phpunit_configuration.xml.dist
+fi
+
+test
