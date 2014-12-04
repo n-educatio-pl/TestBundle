@@ -76,10 +76,6 @@ fi
 
 FILES=$@
 
-if [ -d $FILES ]; then
-    DIRECTORY=1
-fi
-
 if [ "$1" = "phpunit" ]; then
     phpunit -c app/
     exit
@@ -87,6 +83,10 @@ elif [ "$1" = "behat" ]; then
     bin/behat @AcmeAnimalBundle $2 $3 $4 $5
 
     exit $?
+fi
+
+if [ -d $FILES ]; then
+    DIRECTORY=1
 fi
 
 if [ $DIRECTORY = 1 ]; then
